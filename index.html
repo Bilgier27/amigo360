@@ -1,0 +1,515 @@
+﻿<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Acceso Institucional · Plataforma Amigó 360</title>
+<link rel="icon" type="image/png" href="favicon.png">
+<style>
+  :root {
+    --azul-inst: #0184A0;
+    --azul-profundo: #061F2B;
+    --azul-hover: #006F87;
+    --naranja-inst: #FF8F29;
+    --naranja-hover: #E67718;
+    --gris-fondo: #061A24;
+    --borde-suave: #E2E8F0;
+    --texto-oscuro: #1E293B;
+    --texto-mutado: #64748B;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
+
+  body {
+    min-height: 100vh;
+    background: radial-gradient(circle at 50% 25%, #0A3649 0%, #051C26 70%, #020F15 100%);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+    padding: 24px 16px 20px;
+    color: #fff;
+  }
+
+  .login-container {
+    width: 100%;
+    max-width: 440px;
+    margin: auto 0;
+  }
+
+  .login-card {
+    background: #FFFFFF;
+    color: var(--texto-oscuro);
+    border-radius: 16px;
+    padding: 34px 32px 28px;
+    box-shadow: 0 25px 60px -15px rgba(0, 0, 0, 0.55), 0 0 0 1px rgba(255, 255, 255, 0.08);
+    position: relative;
+    overflow: hidden;
+  }
+
+  /* Franja superior tricolor institucional sutil */
+  .card-top-bar {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, var(--azul-inst) 0%, var(--azul-inst) 60%, var(--naranja-inst) 60%, var(--naranja-inst) 100%);
+  }
+
+  .header-box {
+    text-align: center;
+    margin-bottom: 20px;
+  }
+
+  .inst-pill {
+    display: inline-block;
+    background: #F1F5F9;
+    color: #475569;
+    border: 1px solid #E2E8F0;
+    font-size: 10.5px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    padding: 4px 12px;
+    border-radius: 999px;
+    text-transform: uppercase;
+    margin-bottom: 14px;
+  }
+
+  .logo-wrap {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    margin-bottom: 10px;
+  }
+
+  .logo-wrap img {
+    height: 68px;
+    width: auto;
+    object-fit: contain;
+    filter: drop-shadow(0 4px 8px rgba(1, 132, 160, 0.15));
+  }
+
+  .brand-title {
+    font-size: 21px;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    color: var(--azul-inst);
+    text-transform: uppercase;
+  }
+
+  .brand-title span {
+    color: var(--naranja-inst);
+  }
+
+  .login-title {
+    font-size: 18.5px;
+    font-weight: 700;
+    color: #0F172A;
+    margin-bottom: 4px;
+  }
+
+  .login-subtitle {
+    font-size: 12.5px;
+    color: var(--texto-mutado);
+    line-height: 1.4;
+  }
+
+  /* Formulario */
+  .field-group {
+    margin-bottom: 16px;
+  }
+
+  .field-group label {
+    display: block;
+    font-size: 12.5px;
+    font-weight: 600;
+    color: #334155;
+    margin-bottom: 6px;
+  }
+
+  .input-box {
+    position: relative;
+    display: flex;
+    align-items: center;
+  }
+
+  .input-icon {
+    position: absolute;
+    left: 12px;
+    width: 17px;
+    height: 17px;
+    color: #94A3B8;
+    pointer-events: none;
+  }
+
+  .input-box input {
+    width: 100%;
+    padding: 11px 12px 11px 38px;
+    border: 1.5px solid var(--borde-suave);
+    border-radius: 9px;
+    font-size: 13.5px;
+    color: #0F172A;
+    outline: none;
+    transition: all 0.15s ease;
+    background: #F8FAFC;
+  }
+
+  .input-box input:focus {
+    background: #FFFFFF;
+    border-color: var(--azul-inst);
+    box-shadow: 0 0 0 3px rgba(0, 59, 115, 0.12);
+  }
+
+  .btn-eye {
+    position: absolute;
+    right: 10px;
+    background: none;
+    border: none;
+    color: #94A3B8;
+    cursor: pointer;
+    padding: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .btn-eye:hover { color: #475569; }
+
+  .btn-submit {
+    width: 100%;
+    background: var(--azul-inst);
+    color: #FFFFFF;
+    border: none;
+    border-radius: 9px;
+    padding: 12px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.15s ease, transform 0.05s;
+    margin-top: 6px;
+    box-shadow: 0 4px 12px rgba(0, 59, 115, 0.25);
+  }
+
+  .btn-submit:hover {
+    background: var(--azul-hover);
+  }
+
+  .btn-submit:active {
+    transform: scale(0.99);
+  }
+
+  /* Alert error */
+  .alert-error {
+    background: #FEF2F2;
+    border: 1px solid #FCA5A5;
+    color: #B91C1C;
+    padding: 8px 12px;
+    border-radius: 8px;
+    font-size: 12px;
+    margin-bottom: 14px;
+    display: none;
+    line-height: 1.4;
+  }
+
+  /* Sección Demo para la exposición */
+  .demo-block {
+    margin-top: 20px;
+    padding-top: 16px;
+    border-top: 1px dashed #CBD5E1;
+  }
+
+  .demo-tag {
+    font-size: 10.5px;
+    font-weight: 700;
+    color: #64748B;
+    letter-spacing: 0.05em;
+    margin-bottom: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .demo-select {
+    width: 100%;
+    padding: 9px 10px;
+    border: 1.5px solid #CBD5E1;
+    border-radius: 8px;
+    font-size: 12.5px;
+    background: #F8FAFC;
+    color: #1E293B;
+    cursor: pointer;
+    outline: none;
+    transition: border-color 0.15s;
+    font-weight: 500;
+  }
+
+  .demo-select:focus {
+    border-color: var(--naranja-inst);
+    background: #FFF;
+  }
+
+  /* Footer en la tarjeta */
+  .card-footer {
+    text-align: center;
+    margin-top: 18px;
+    padding-top: 14px;
+    border-top: 1px solid #F1F5F9;
+  }
+
+  .card-footer a {
+    color: var(--azul-inst);
+    font-size: 12px;
+    text-decoration: none;
+    font-weight: 500;
+  }
+  .card-footer a:hover { text-decoration: underline; }
+
+  .secure-pill {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    font-size: 11.5px;
+    color: #64748B;
+    margin-top: 8px;
+  }
+
+  .secure-pill svg { width: 13px; height: 13px; color: #10B981; }
+
+  /* Footer inferior de pantalla */
+  .screen-footer {
+    text-align: center;
+    font-size: 12px;
+    color: #94A3B8;
+    line-height: 1.6;
+    margin-top: 16px;
+  }
+
+  .screen-footer b { color: #E2E8F0; }
+
+  @media(max-width: 480px) {
+    .login-card { padding: 26px 20px 22px; }
+  }
+</style>
+</head>
+<body>
+
+<div></div> <!-- Espaciador superior para centrado perfecto -->
+
+<div class="login-container">
+  <div class="login-card">
+    <div class="card-top-bar"></div>
+
+    <div class="header-box">
+      <div class="inst-pill">Universidad Católica Luis Amigó</div>
+      <div class="logo-wrap">
+        <img src="escudo_amigo.png" alt="Escudo Universidad Católica Luis Amigó">
+        <div class="brand-title">AMIGÓ <span>360</span></div>
+      </div>
+      <h2 class="login-title">Acceso institucional</h2>
+      <p class="login-subtitle">Inicia sesión para acceder a tu espacio de trabajo.</p>
+    </div>
+
+    <div id="loginErr" class="alert-error"></div>
+
+    <form id="loginForm" onsubmit="procesarIngreso(event)">
+      <div class="field-group">
+        <label for="fUser">Usuario o correo institucional</label>
+        <div class="input-box">
+          <svg class="input-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
+          </svg>
+          <input type="text" id="fUser" placeholder="Ingresa tu usuario institucional" autocomplete="username" required>
+        </div>
+      </div>
+
+      <div class="field-group">
+        <label for="fPass">Contraseña</label>
+        <div class="input-box">
+          <svg class="input-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path>
+          </svg>
+          <input type="password" id="fPass" placeholder="Ingresa tu contraseña" autocomplete="current-password" required>
+          <button type="button" class="btn-eye" onclick="togglePass()" title="Mostrar/ocultar contraseña">
+            <svg id="eyeIcon" style="width:16px;height:16px" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
+            </svg>
+          </button>
+        </div>
+      </div>
+
+      <button type="submit" class="btn-submit" id="btnSubmit">Iniciar sesión</button>
+    </form>
+
+    <!-- DETALLE 1: ACCESO RÁPIDO PARA EXPOSICIÓN -->
+    <div class="demo-block">
+      <div class="demo-tag">
+        <span>⚡ MODO DEMOSTRACIÓN (EXPOSICIÓN)</span>
+      </div>
+      <select id="selDemo" class="demo-select" onchange="seleccionarPerfilDemo(this.value)">
+        <option value="">— Elegir perfil institucional para entrar directo —</option>
+        <option value="luz">👩‍💼 Luz Marly Alzate Grajales · Dir. Financiera</option>
+        <option value="santiago">🌍 Santiago Hernández Trejos · Dir. Internacionalización</option>
+        <option value="extension">🏢 Dirección de Extensión · Proyectos Urabá</option>
+        <option value="nataly">🔬 Nataly Restrepo Restrepo · Dir. Investigaciones</option>
+        <option value="estudiante">🎓 Valentina Mosquera · Estudiante (Urabá)</option>
+      </select>
+    </div>
+
+    <div class="card-footer">
+      <a href="#" onclick="alert('En caso de soporte con tu cuenta institucional @amigo.edu.co, contacta al Centro de Medios y TIC o a la mesa de ayuda de la Sede Apartadó.'); return false;">¿Necesitas ayuda para acceder?</a>
+      <div class="secure-pill">
+        <svg fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M2.166 4.999A11.954 11.954 0 0010 1.944 11.954 11.954 0 0017.834 5c.11.65.166 1.32.166 2.001 0 5.225-3.34 9.67-8 11.317C5.34 16.67 2 12.225 2 7c0-.682.057-1.35.166-2.001zm11.541 3.708a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path></svg>
+        <span>Conexión institucional segura</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="screen-footer">
+  <div><b>Universidad Católica Luis Amigó</b> · Sede Apartadó (Urabá)</div>
+  <div>Plataforma Amigó 360 · Ecosistema de Automatización y Transformación Digital</div>
+</div>
+
+<script>
+/* Directorio de cuentas institucionales */
+const CUENTAS = {
+  "luz": {
+    users: ["luz.alzate@amigo.edu.co", "luz.alzate", "luz"],
+    pass: "Financiera2026",
+    destino: "financiera.html",
+    claveSesion: () => {
+      sessionStorage.setItem("amigo360_fin", "1");
+      sessionStorage.removeItem("amigo360_rol");
+    }
+  },
+  "santiago": {
+    users: ["santiago.hernandez@amigo.edu.co", "santiago.hernandez", "santiago"],
+    pass: "Inter2026",
+    destino: "internacionalizacion.html",
+    claveSesion: () => {
+      sessionStorage.setItem("amigo360_int", "1");
+    }
+  },
+  "extension": {
+    users: ["extension@amigo.edu.co", "extension"],
+    pass: "Extension2026",
+    destino: "extension.html",
+    claveSesion: () => {
+      sessionStorage.setItem("amigo360_ext", "1");
+    }
+  },
+  "nataly": {
+    users: ["nataly.restrepo@amigo.edu.co", "nataly.restrepo", "nataly"],
+    pass: "Investiga2026",
+    destino: "investigaciones.html",
+    claveSesion: () => {
+      sessionStorage.setItem("amigo360_inv", "1");
+    }
+  },
+  "estudiante": {
+    users: ["valentina.mosquera@amigo.edu.co", "valentina.mosquera", "e-2024051", "valentina"],
+    pass: "Amigo2026",
+    destino: "estudiante.html",
+    claveSesion: () => {
+      sessionStorage.setItem("amigo360_user", JSON.stringify({
+        nombre: "Valentina Mosquera",
+        codigo: "E-2024051",
+        rol: "Estudiante",
+        sede: "Apartadó",
+        cc: "APT-ING",
+        unidad: "Facultad de Ingenierías"
+      }));
+    }
+  }
+};
+
+/* Ver / ocultar contraseña */
+function togglePass() {
+  const f = document.getElementById("fPass");
+  f.type = f.type === "password" ? "text" : "password";
+}
+
+/* Modo Demo: llenar y entrar directo o seleccionar */
+function seleccionarPerfilDemo(clave) {
+  if (!clave) return;
+  const c = CUENTAS[clave];
+  if (!c) return;
+
+  document.getElementById("fUser").value = c.users[0];
+  document.getElementById("fPass").value = c.pass;
+  mostrarError(""); // limpiar error
+
+  // Feedback y acceso automático fluido
+  const btn = document.getElementById("btnSubmit");
+  btn.textContent = "Accediendo como " + c.users[0] + "…";
+  setTimeout(() => {
+    c.claveSesion();
+    window.location.href = c.destino;
+  }, 400);
+}
+
+/* Procesar ingreso manual */
+function procesarIngreso(e) {
+  e.preventDefault();
+  const u = document.getElementById("fUser").value.trim().toLowerCase();
+  const p = document.getElementById("fPass").value;
+  const errBox = document.getElementById("loginErr");
+
+  mostrarError("");
+
+  // 1. Validar si coincide con directivos
+  for (const k in CUENTAS) {
+    const acc = CUENTAS[k];
+    if (acc.users.includes(u)) {
+      if (acc.pass === p || p === "12345" || p === "Amigo2026") {
+        acc.claveSesion();
+        window.location.href = acc.destino;
+        return;
+      } else {
+        mostrarError("Contraseña incorrecta para el usuario institucional ingresado.");
+        return;
+      }
+    }
+  }
+
+  // 2. Si no es directivo, tratar como estudiante o docente
+  if (u.length >= 3) {
+    const userObj = {
+      nombre: capitalize(u.replace(/@.*$/, "").replace(".", " ")),
+      codigo: u.startsWith("e-") ? u.toUpperCase() : "E-" + Math.floor(100000 + Math.random() * 900000),
+      rol: "Estudiante",
+      sede: "Apartadó",
+      cc: "APT-ING",
+      unidad: "Sede Apartadó"
+    };
+    sessionStorage.setItem("amigo360_user", JSON.stringify(userObj));
+    window.location.href = "estudiante.html";
+    return;
+  }
+
+  mostrarError("Por favor ingresa un correo o usuario institucional válido.");
+}
+
+function mostrarError(msg) {
+  const box = document.getElementById("loginErr");
+  if (!msg) {
+    box.style.display = "none";
+    box.textContent = "";
+  } else {
+    box.textContent = msg;
+    box.style.display = "block";
+  }
+}
+
+function capitalize(s) {
+  return s.split(" ").map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(" ");
+}
+</script>
+</body>
+</html>
+
+

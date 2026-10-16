@@ -1,0 +1,201 @@
+{
+  "version": 1792133008614.6633,
+  "nextId": 106,
+  "solicitudes": [
+    {
+      "id": 101,
+      "creada": 1792125264944,
+      "actualizada": 1792128864944,
+      "categoria": "financiera",
+      "solicitante": {
+        "nombre": "Jorge Cuesta",
+        "codigo": "E-2023118",
+        "rol": "Estudiante",
+        "sede": "Apartadó",
+        "unidad": "Bienestar Universitario"
+      },
+      "cc": "APT-BIE",
+      "tipo": "Compra de bien",
+      "descripcion": "Kits deportivos para torneo interno de integración",
+      "cantidad": 20,
+      "valor": 1450000,
+      "justificacion": "Torneo de integración de la sede Apartadó, 160 estudiantes participantes.",
+      "proveedorSugerido": "",
+      "adjuntos": [],
+      "estado": "radicada",
+      "estadoPrevio": null,
+      "oc": null,
+      "historial": [
+        {
+          "ts": 1792125264944,
+          "autor": "sistema",
+          "texto": "Solicitud radicada desde el portal."
+        }
+      ],
+      "noLeidoFin": false,
+      "noLeidoEst": false
+    },
+    {
+      "id": 102,
+      "creada": 1792038864944,
+      "actualizada": 1792042464944,
+      "categoria": "extension",
+      "solicitante": {
+        "nombre": "Carlos Mejía",
+        "codigo": "A-10422",
+        "rol": "Administrativo",
+        "sede": "Apartadó",
+        "unidad": "Dirección de Extensión"
+      },
+      "cc": "MED-EXT",
+      "tipo": "Iniciativa de Extensión",
+      "descripcion": "Diplomado en Gerencia Logística y Portuaria para Urabá",
+      "cantidad": 1,
+      "valor": 6500000,
+      "justificacion": "Diplomado ofertado en alianza con empresas del sector portuario de Urabá.",
+      "proveedorSugerido": "",
+      "adjuntos": [],
+      "estado": "revision",
+      "estadoPrevio": null,
+      "oc": null,
+      "historial": [
+        {
+          "ts": 1792038864944,
+          "autor": "sistema",
+          "texto": "Propuesta radicada en el Banco de Proyectos."
+        },
+        {
+          "ts": 1792110864944,
+          "autor": "financiera",
+          "texto": "Evaluación de pertinencia social aprobada por Extensión."
+        }
+      ],
+      "noLeidoFin": false,
+      "noLeidoEst": false
+    },
+    {
+      "id": 103,
+      "creada": 1792089264944,
+      "actualizada": 1792133008614,
+      "categoria": "internacional",
+      "solicitante": {
+        "nombre": "Sophie Miller",
+        "codigo": "INT-8821",
+        "rol": "Estudiante",
+        "sede": "Apartadó",
+        "unidad": "Facultad de Ingenierías"
+      },
+      "cc": "APT-ING",
+      "tipo": "Acompañamiento Psicológico (Movilidad)",
+      "descripcion": "Acompañamiento por adaptación cultural en Apartadó",
+      "cantidad": 1,
+      "valor": 0,
+      "justificacion": "Estudiante foránea de intercambio en Apartadó solicitando apoyo ante choque cultural y clima.",
+      "proveedorSugerido": "",
+      "adjuntos": [],
+      "estado": "revision",
+      "estadoPrevio": null,
+      "oc": null,
+      "historial": [
+        {
+          "ts": 1792089264944,
+          "autor": "sistema",
+          "texto": "Solicitud de apoyo emocional radicada."
+        },
+        {
+          "ts": 1792103664944,
+          "autor": "financiera",
+          "texto": "Dirección de Internacionalización y Psicología revisando caso."
+        },
+        {
+          "ts": 1792133008614,
+          "autor": "financiera",
+          "texto": "Estimado(a) Sophie Miller: Recibe un cordial saludo de la Dirección de Internacionalización. Hemos recibido tu postulación \"Acompañamiento por adaptación cultural en Apartadó\" con gran agrado. Nuestro equipo ya inició el enlace con la coordinación académica para garantizar tu homologación sin contratiempos. Te estaremos contactando para la sesión de inducción intercultural. ¡Éxitos en tu experiencia formativa!"
+        }
+      ],
+      "noLeidoFin": true,
+      "noLeidoEst": true
+    },
+    {
+      "id": 104,
+      "creada": 1792114464944,
+      "actualizada": 1792132494247,
+      "categoria": "investigacion",
+      "solicitante": {
+        "nombre": "Valentina Mosquera",
+        "codigo": "E-2024051",
+        "rol": "Estudiante",
+        "sede": "Apartadó",
+        "unidad": "Facultad de Ingenierías"
+      },
+      "cc": "APT-ING",
+      "tipo": "Inscripción a Semillero",
+      "descripcion": "Inscripción al Semillero SIDET (Desarrollo y Software Urabá)",
+      "cantidad": 1,
+      "valor": 0,
+      "justificacion": "Estudiante de Ingeniería de Sistemas interesada en la línea de automatización e IoT.",
+      "proveedorSugerido": "",
+      "adjuntos": [],
+      "estado": "orden",
+      "estadoPrevio": null,
+      "oc": null,
+      "historial": [
+        {
+          "ts": 1792114464944,
+          "autor": "sistema",
+          "texto": "Postulación a semillero radicada."
+        },
+        {
+          "ts": 1792121664944,
+          "autor": "financiera",
+          "texto": "Dirección de Investigaciones validando hoja de vida académica."
+        },
+        {
+          "ts": 1792132494247,
+          "autor": "financiera",
+          "texto": "✓ Nataly Restrepo Restrepo (Directora de Investigaciones) aprobó tu postulación. Has sido admitido(a) formalmente en el semillero de investigación."
+        }
+      ],
+      "noLeidoFin": true,
+      "noLeidoEst": true
+    },
+    {
+      "id": 105,
+      "creada": 1792132570070,
+      "actualizada": 1792132589319,
+      "solicitante": {
+        "nombre": "Keisy",
+        "codigo": "E-648847",
+        "rol": "Estudiante",
+        "sede": "Apartadó",
+        "unidad": "Ingeniería de Sistemas"
+      },
+      "cc": "APT-ING",
+      "categoria": "investigacion",
+      "tipo": "Inscripción a Semillero de Investigación",
+      "descripcion": "robótica",
+      "cantidad": 1,
+      "valor": 0,
+      "justificacion": "La adquisición de robótica resulta indispensable para fortalecer las actividades académicas y prácticas formativas de Ingeniería de Sistemas en la sede Apartadó. Esta compra impacta directamente los resultados de aprendizaje del semestre, garantizando los estándares de calidad institucional y beneficiando activamente a la comunidad estudiantil y docente en sus compromisos curriculares.",
+      "proveedorSugerido": "",
+      "adjuntos": [],
+      "estado": "orden",
+      "estadoPrevio": null,
+      "oc": null,
+      "historial": [
+        {
+          "ts": 1792132570070,
+          "autor": "sistema",
+          "texto": "Solicitud radicada desde el portal. Enviada en tiempo real a: Nataly Restrepo Restrepo."
+        },
+        {
+          "ts": 1792132589319,
+          "autor": "financiera",
+          "texto": "✓ Nataly Restrepo Restrepo (Directora de Investigaciones) aprobó tu postulación. Has sido admitido(a) formalmente en el semillero de investigación."
+        }
+      ],
+      "noLeidoFin": true,
+      "noLeidoEst": true
+    }
+  ]
+}

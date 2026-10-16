@@ -1,0 +1,637 @@
+﻿<!DOCTYPE html>
+<html lang="es">
+<head>
+<link rel="icon" type="image/png" href="favicon.png">
+<link rel="shortcut icon" href="favicon.ico">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Amigó 360 · Portal del Solicitante</title>
+<link rel="stylesheet" href="styles.css">
+<style>
+  .app{display:grid;grid-template-columns:340px 1fr;height:calc(100vh - 64px)}
+  aside{background:#fff;border-right:1px solid var(--borde);display:flex;flex-direction:column;min-height:0}
+  .aside-head{padding:16px;border-bottom:1px solid var(--borde)}
+  .aside-head h3{font-size:13px;color:var(--gris);text-transform:uppercase;letter-spacing:.05em;margin:14px 0 0}
+  .aside-list{flex:1;overflow:auto}
+  .content{overflow:auto;padding:24px 28px}
+  .content-inner{max-width:860px;margin:0 auto}
+  .page-title{font-size:22px;color:var(--azul);margin-bottom:4px}
+  .page-sub{color:var(--gris);margin-bottom:20px}
+  .how{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+  .how div{background:#fff;border:1px solid var(--borde);border-radius:12px;padding:14px;font-size:12.5px;line-height:1.5}
+  .how b{display:block;font-size:22px;margin-bottom:6px}
+  .stats{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:16px}
+  .stat{background:#fff;border:1px solid var(--borde);border-radius:12px;padding:14px}
+  .stat small{color:var(--gris);font-size:12px;font-weight:600}
+  .stat b{display:block;font-size:26px;color:var(--azul)}
+  .cc-box{background:var(--azul3);border-radius:10px;padding:10px 12px;font-size:12.5px;margin-bottom:14px}
+  .empty{padding:30px 16px;text-align:center;color:var(--gris);font-size:13px}
+  .det-head{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;margin-bottom:16px}
+
+  /* Pestañas de navegación móvil */
+  .mobile-tabs { display: none; }
+  .mobile-back-btn { display: none; }
+
+  @media (max-width: 768px) {
+    .mobile-tabs {
+      display: flex;
+      background: #FFFFFF;
+      border-bottom: 2px solid var(--borde);
+      position: sticky;
+      top: 50px;
+      z-index: 15;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.06);
+    }
+    .mob-tab-btn {
+      flex: 1;
+      padding: 12px 10px;
+      background: none;
+      border: none;
+      border-bottom: 3px solid transparent;
+      font-weight: 700;
+      font-size: 13.5px;
+      color: var(--gris);
+      cursor: pointer;
+      text-align: center;
+      transition: 0.15s;
+    }
+    .mob-tab-btn.active {
+      color: var(--azul);
+      border-bottom-color: var(--naranja);
+      background: #F8FAFC;
+    }
+    .desktop-only-btn {
+      display: none !important;
+    }
+    .mobile-back-btn {
+      display: inline-flex !important;
+      margin-bottom: 14px;
+      background: #F1F5F9;
+      border: 1px solid #CBD5E1;
+      border-radius: 8px;
+      padding: 7px 14px;
+      font-size: 12.5px;
+      font-weight: 700;
+      color: var(--azul);
+      cursor: pointer;
+    }
+
+    .app {
+      display: block !important;
+      height: auto !important;
+      min-height: calc(100vh - 110px);
+    }
+    aside {
+      border-right: none !important;
+      height: auto !important;
+      min-height: calc(100vh - 120px);
+    }
+    .content {
+      padding: 14px 12px !important;
+      height: auto !important;
+      overflow: visible !important;
+    }
+    .mobile-hide-aside #asideCol {
+      display: none !important;
+    }
+    .mobile-hide-content #contentCol {
+      display: none !important;
+    }
+    .how {
+      grid-template-columns: 1fr 1fr;
+    }
+    .stats {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>
+</head>
+<body>
+
+<!-- ======================= LOGIN DEL SOLICITANTE ======================= -->
+<div id="loginView" class="login-wrap">
+  <div class="login-side">
+    <img src="escudo_amigo.png" alt="Escudo Luis Amigó" style="width:58px;height:58px;background:#fff;border-radius:12px;padding:4px;box-shadow:0 4px 12px rgba(0,0,0,.2)">
+    <h2>Portal de Solicitudes<br>Amigó 360</h2>
+    <p>Radica tus necesidades institucionales en 1 minuto sin papeles ni correos. Tu requerimiento viaja directo al directivo encargado (Financiera, Internacionalización, Extensión o Investigaciones) con seguimiento en tiempo real.</p>
+    <ul>
+      <li>Sin formatos impresos ni firmas manuales</li>
+      <li>Seguimiento en vivo: sabes exactamente en qué paso va tu trámite</li>
+      <li>Redacción y soporte técnico asistido con Inteligencia Artificial Gemini</li>
+    </ul>
+  </div>
+  <div class="login-form">
+    <div class="login-card">
+      <h3>Identifícate</h3>
+      <div class="sub">Estudiantes, docentes y administrativos · Sedes Apartadó y Medellín</div>
+      <div id="lErr" class="err hidden"></div>
+      <div class="field"><label>Nombre completo</label><input id="lNombre" placeholder="Ej: Valentina Mosquera"></div>
+      <div class="row2">
+        <div class="field"><label>Código / Documento</label><input id="lCodigo" placeholder="Ej: E-2024051"></div>
+        <div class="field"><label>Rol</label>
+          <select id="lRol"><option>Estudiante</option><option>Docente</option><option>Administrativo</option></select></div>
+      </div>
+      <div class="row2">
+        <div class="field"><label>Sede</label>
+          <select id="lSede" onchange="cargarUnidades()"><option>Apartadó</option><option>Medellín</option></select></div>
+        <div class="field"><label>Unidad / Programa</label><select id="lUnidad"></select></div>
+      </div>
+      <button class="btn orange block" onclick="ingresar()">Ingresar al portal →</button>
+      <div class="demo-box">
+        🎓 <b>Para la demostración:</b> <span class="link" onclick="demoUser()">llenar con datos de ejemplo</span><br>
+        Abre el <b>Portal de Financiera</b> en otra pestaña para ver cómo llega la solicitud en vivo.
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ======================= APP DEL SOLICITANTE ======================= -->
+<div id="appView" class="hidden">
+  <div class="topbar">
+    <div class="brand-box">
+      <img src="escudo_amigo.png" class="brand-logo-img" alt="Escudo Luis Amigó">
+      <div class="brand-names">
+        <span class="u-name">Universidad Católica Luis Amigó</span>
+        <span class="p-name">Amigó 360 · Solicitudes</span>
+      </div>
+    </div>
+    <div class="sp"></div>
+    <div class="user-pill"><div class="avatar" id="uAvatar">V</div><div><b id="uNombre"></b><br><span id="uInfo" style="opacity:.85"></span></div></div>
+    <button class="top-btn" onclick="abrirConfigGemini()" title="Configurar API Key de Gemini">✨ Gemini IA</button>
+    <button class="top-btn" onclick="salir()">Salir</button>
+  </div>
+
+  <!-- PESTAÑAS MÓVILES -->
+  <div class="mobile-tabs">
+    <button id="tabMobNueva" class="mob-tab-btn active" onclick="switchMobileTab('nueva')">＋ Nueva Solicitud</button>
+    <button id="tabMobLista" class="mob-tab-btn" onclick="switchMobileTab('lista')">📋 Mis Solicitudes (<span id="mobCount">0</span>)</button>
+  </div>
+
+  <div class="app mobile-hide-aside" id="appLayout">
+    <aside id="asideCol">
+      <div class="aside-head">
+        <button class="btn orange block desktop-only-btn" onclick="verNueva()">＋ Nueva solicitud</button>
+        <h3>Mis solicitudes</h3>
+      </div>
+      <div class="aside-list" id="lista"></div>
+    </aside>
+    <div class="content" id="contentCol"><div class="content-inner" id="view"></div></div>
+  </div>
+</div>
+
+<script src="db.js"></script>
+<script>
+/* ======================= SESIÓN ======================= */
+let user = JSON.parse(sessionStorage.getItem("amigo360_user") || "null");
+let vista = { tipo: "inicio", id: null };
+let conocidos = {};   // id -> nº de eventos de historial (para detectar respuestas nuevas)
+
+function cargarUnidades(sel){
+  const sede = document.getElementById("lSede").value;
+  document.getElementById("lUnidad").innerHTML = Object.entries(CENTROS)
+    .filter(([,c]) => c.sede === sede)
+    .map(([cc,c]) => `<option value="${cc}" ${cc===sel?"selected":""}>${c.nombre}</option>`).join("");
+}
+function demoUser(){
+  document.getElementById("lNombre").value = "Valentina Mosquera";
+  document.getElementById("lCodigo").value = "E-2024051";
+  document.getElementById("lRol").value = "Estudiante";
+  document.getElementById("lSede").value = "Apartadó";
+  cargarUnidades("APT-ING");
+}
+function ingresar(){
+  const nombre = document.getElementById("lNombre").value.trim();
+  const codigo = document.getElementById("lCodigo").value.trim();
+  const err = document.getElementById("lErr");
+  if(!nombre || !codigo){ err.textContent = "Escribe tu nombre y tu código o documento."; err.classList.remove("hidden"); return; }
+  const cc = document.getElementById("lUnidad").value;
+  user = { nombre, codigo, rol: document.getElementById("lRol").value, sede: document.getElementById("lSede").value, cc, unidad: CENTROS[cc].nombre };
+  sessionStorage.setItem("amigo360_user", JSON.stringify(user));
+  iniciarApp();
+}
+function salir(){ sessionStorage.removeItem("amigo360_user"); window.location.href = "index.html"; }
+
+function iniciarApp(){
+  document.getElementById("loginView").classList.add("hidden");
+  document.getElementById("appView").classList.remove("hidden");
+  document.getElementById("uNombre").textContent = user.nombre;
+  document.getElementById("uInfo").textContent = `${user.rol} · ${user.unidad} · ${user.sede}`;
+  document.getElementById("uAvatar").textContent = user.nombre.charAt(0).toUpperCase();
+  misSolicitudes().forEach(s => conocidos[s.id] = s.historial.length);
+  render();
+  if(window.innerWidth <= 768){
+    switchMobileTab("nueva");
+  }
+}
+
+/* ======================= DATOS ======================= */
+function misSolicitudes(){
+  return dbLoad().solicitudes.filter(s => s.solicitante.codigo === user.codigo).sort((a,b) => b.actualizada - a.actualizada);
+}
+
+/* ======================= RENDER ======================= */
+function render(){
+  renderLista();
+  if(vista.tipo === "nueva") return;           // no borrar el formulario mientras se escribe
+  if(vista.tipo === "detalle") renderDetalle(vista.id);
+  else renderInicio();
+}
+
+/* ======================= NAVEGACIÓN MÓVIL ======================= */
+let mobileTab = "nueva";
+
+function switchMobileTab(t){
+  mobileTab = t;
+  const appEl = document.getElementById("appLayout");
+  const bN = document.getElementById("tabMobNueva");
+  const bL = document.getElementById("tabMobLista");
+  if(bN && bL){
+    bN.classList.toggle("active", t === "nueva");
+    bL.classList.toggle("active", t === "lista");
+  }
+  if(appEl){
+    if(t === "nueva"){
+      appEl.classList.add("mobile-hide-aside");
+      appEl.classList.remove("mobile-hide-content");
+      if(vista.tipo !== "nueva" && vista.tipo !== "detalle") verNueva();
+    } else {
+      appEl.classList.remove("mobile-hide-aside");
+      appEl.classList.add("mobile-hide-content");
+    }
+  }
+}
+
+function renderLista(){
+  const mis = misSolicitudes();
+  const mobCount = document.getElementById("mobCount");
+  if(mobCount) mobCount.textContent = mis.length;
+
+  document.getElementById("lista").innerHTML = mis.length ? mis.map(s => {
+    const cat = CATEGORIAS[s.categoria || "financiera"] || CATEGORIAS.financiera;
+    return `
+    <div class="list-item ${s.noLeidoEst?"unread":""} ${vista.id===s.id?"active":""}" onclick="verDetalle(${s.id})">
+      <div class="li-top"><span class="li-id">${solId(s.id)}</span><span class="li-time">${fecha(s.actualizada)}</span></div>
+      <div class="li-desc">${esc(s.descripcion)}</div>
+      <div class="li-sub">
+        <span class="badge ${cat.badge}" style="font-size:10.5px;padding:2px 6px">${cat.icono} ${cat.nombre.split(" ")[0]}</span>
+        <span class="badge ${ESTADOS[s.estado].cls}">${ESTADOS[s.estado].est}</span>
+        ${s.noLeidoEst?'<span class="dot-new" title="Novedad"></span>':""}
+      </div>
+    </div>`;
+  }).join("") : `<div class="empty">Aún no tienes solicitudes registradas.<br><button class="btn sm orange" onclick="verNueva()" style="margin-top:10px">＋ Radicar la primera</button></div>`;
+}
+
+function verNueva(){
+  vista = { tipo: "nueva", id: null };
+  const appEl = document.getElementById("appLayout");
+  if(appEl){
+    appEl.classList.add("mobile-hide-aside");
+    appEl.classList.remove("mobile-hide-content");
+  }
+  const bN = document.getElementById("tabMobNueva");
+  const bL = document.getElementById("tabMobLista");
+  if(bN && bL){ bN.classList.add("active"); bL.classList.remove("active"); }
+  renderLista();
+  const c = CENTROS[user.cc] || { nombre: "Ingeniería de Sistemas", sede: "Apartadó" };
+  document.getElementById("view").innerHTML = `
+    <div class="page-title">Nueva solicitud institucional</div>
+    <div class="page-sub">Elige el área a la que te diriges. Tu requerimiento viaja directamente a la bandeja del director encargado.</div>
+    <div class="card">
+      <div class="field">
+        <label><b>1. Selecciona el área o directivo encargado:</b></label>
+        <select id="fCat" onchange="cambiarCategoriaForm()" style="font-weight:700;color:var(--azul);background:#F0F4F8">
+          <option value="financiera">🛒 Dirección Financiera (Luz Marly Alzate) · Compras y Contratación</option>
+          <option value="internacional">🌍 Dirección de Internacionalización (Santiago Hernández) · Movilidad y Bienestar</option>
+          <option value="extension">📁 Dirección de Extensión · Banco de Proyectos de Impacto en Urabá</option>
+          <option value="investigacion">🔬 Dirección de Investigaciones (Nataly Restrepo) · Semilleros y Proyectos</option>
+        </select>
+      </div>
+
+      <div class="field">
+        <label><b>2. Carrera / Programa académico (Unidad solicitante):</b></label>
+        <select id="fPrograma" onchange="actualizarInfoPrograma()" style="font-weight:600;color:#1E293B;background:#FFFFFF;border:1.5px solid var(--borde)">
+        </select>
+        <div class="hint" id="fCcHint" style="font-size:12px;color:var(--gris);margin-top:5px"></div>
+      </div>
+      <div id="fErr" class="err hidden"></div>
+
+      <div class="field"><label id="lblTipo">¿Qué tipo de necesidad deseas solicitar?</label>
+        <select id="fTipo"></select></div>
+
+      <div class="field"><label id="lblDesc">Título o descripción</label>
+        <input id="fDesc" placeholder="Describe brevemente lo que solicitas..."></div>
+
+      <div class="row2" id="rowMonto">
+        <div class="field"><label>Cantidad / Cupos</label><input id="fCant" type="number" min="1" value="1"></div>
+        <div class="field"><label>Presupuesto estimado (COP)</label><input id="fValor" type="number" min="0" placeholder="Ej: 4800000"><div class="hint" id="fValorTxt"></div></div>
+      </div>
+
+      <div class="field">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:5px">
+          <label style="margin:0">Justificación institucional / Motivo</label>
+          <button type="button" class="btn sm purple" onclick="mejorarConGemini()" id="btnGeminiJust" style="padding:4px 10px;font-size:11.5px">
+            ✨ Redactar / Mejorar con Gemini IA
+          </button>
+        </div>
+        <textarea id="fJust" placeholder="Escribe el motivo o justificación. Puedes escribir una idea corta y darle clic al botón morado para que Gemini la redacte formalmente."></textarea>
+      </div>
+
+      <div class="field" id="fieldProv"><label id="lblProv">Proveedor o institución sugerida (opcional)</label><input id="fProv" placeholder="Ej: Sistemas Urabá S.A.S."></div>
+      <div class="field"><label>Adjuntos (opcional): soporte, cotización, anteproyecto…</label><input id="fAdj" type="file" multiple>
+        <div class="hint">En esta demostración se registra el nombre del archivo adjunto.</div></div>
+
+      <div style="display:flex;gap:10px;justify-content:flex-end">
+        <button class="btn ghost" onclick="vista={tipo:'inicio'};render()">Cancelar</button>
+        <button class="btn orange" onclick="enviarSolicitud()" id="btnSubmitForm">Enviar solicitud ➤</button>
+      </div>
+    </div>`;
+
+  const selProg = document.getElementById("fPrograma");
+  selProg.innerHTML = Object.entries(CENTROS)
+    .filter(([k, cent]) => cent.sede === "Apartadó")
+    .map(([k, cent]) => `<option value="${k}" ${k===(user.cc||"APT-ING")?"selected":""}>🎓 ${cent.nombre} · Sede Apartadó</option>`)
+    .join("");
+  actualizarInfoPrograma();
+
+  cambiarCategoriaForm();
+  document.getElementById("fValor").addEventListener("input", e => document.getElementById("fValorTxt").textContent = e.target.value ? fmt(e.target.value) + " COP" : "");
+}
+
+function actualizarInfoPrograma(){
+  const k = document.getElementById("fPrograma") ? document.getElementById("fPrograma").value : user.cc;
+  const c = CENTROS[k];
+  const hint = document.getElementById("fCcHint");
+  if(hint && c){
+    hint.innerHTML = `📌 Centro de costo asignado: <b>${k}</b> · Sede: <b>${c.sede}</b> · Presupuesto anual: <b>${fmt(c.presupuesto)}</b>`;
+    // Sincronizar dinámicamente con la barra superior de usuario
+    user.cc = k;
+    user.unidad = c.nombre;
+    user.sede = c.sede;
+    sessionStorage.setItem("amigo360_user", JSON.stringify(user));
+    const uInfo = document.getElementById("uInfo");
+    if(uInfo) uInfo.textContent = `${user.rol} · ${c.nombre} · ${c.sede}`;
+  }
+}
+
+function cambiarCategoriaForm(){
+  const cat = document.getElementById("fCat").value;
+  const selTipo = document.getElementById("fTipo");
+  const rowMonto = document.getElementById("rowMonto");
+  const fieldProv = document.getElementById("fieldProv");
+  const btnSubmit = document.getElementById("btnSubmitForm");
+  const lblDesc = document.getElementById("lblDesc");
+
+  if(cat === "financiera"){
+    selTipo.innerHTML = `
+      <option>Compra de bien (equipos, software, insumos)</option>
+      <option>Contratación de servicio (asesoría, capacitador)</option>
+      <option>Apoyo para evento o salida académica</option>`;
+    lblDesc.textContent = "Descripción del bien o servicio solicitado";
+    document.getElementById("fDesc").placeholder = "Ej: 3 licencias de software MATLAB para ingeniería";
+    document.getElementById("lblProv").textContent = "Proveedor sugerido (opcional)";
+    rowMonto.style.display = "grid";
+    fieldProv.style.display = "block";
+    btnSubmit.textContent = "Enviar a Dirección Financiera (Luz Marly) ➤";
+  } else if(cat === "internacional"){
+    selTipo.innerHTML = `
+      <option>Postulación a Movilidad / Intercambio Académico</option>
+      <option>Solicitud de Acompañamiento Psicoemocional (Choque cultural)</option>
+      <option>Inscripción a Taller de Inglés / Bilingüismo Docente</option>`;
+    lblDesc.textContent = "Universidad de destino o motivo de acompañamiento";
+    document.getElementById("fDesc").placeholder = "Ej: Postulación a intercambio en Univ. de Salamanca (España)";
+    document.getElementById("fValor").value = "0";
+    rowMonto.style.display = "none";
+    document.getElementById("lblProv").textContent = "País / Ciudad de destino";
+    fieldProv.style.display = "block";
+    btnSubmit.textContent = "Enviar a Internacionalización (Santiago Hernández) ➤";
+  } else if(cat === "extension"){
+    selTipo.innerHTML = `
+      <option>Propuesta de Proyecto de Impacto Social en Urabá</option>
+      <option>Propuesta de Consultoría Técnica Empresarial</option>
+      <option>Propuesta de Curso / Diplomado de Extensión</option>`;
+    lblDesc.textContent = "Nombre de la iniciativa comunitaria o consultoría";
+    document.getElementById("fDesc").placeholder = "Ej: Taller de capacitación en innovación para emprendedoras de Carepa";
+    document.getElementById("lblProv").textContent = "Comunidad, alcaldía o empresa aliada";
+    rowMonto.style.display = "grid";
+    fieldProv.style.display = "block";
+    btnSubmit.textContent = "Enviar a Dirección de Extensión (Banco de Proyectos) ➤";
+  } else if(cat === "investigacion"){
+    selTipo.innerHTML = `
+      <option>Inscripción a Semillero de Investigación</option>
+      <option>Postulación de Proyecto a Convocatoria MinCiencias</option>
+      <option>Solicitud de Publicación en Micrositio Científico</option>`;
+    lblDesc.textContent = "Semillero o línea de investigación de interés";
+    document.getElementById("fDesc").placeholder = "Ej: Semillero SIDET - Desarrollo de Software e IoT en Urabá";
+    document.getElementById("fValor").value = "0";
+    rowMonto.style.display = "none";
+    fieldProv.style.display = "none";
+    btnSubmit.textContent = "Enviar a Investigaciones (Nataly Restrepo) ➤";
+  }
+}
+
+async function mejorarConGemini(){
+  const desc = document.getElementById("fDesc").value.trim();
+  const tipo = document.getElementById("fTipo").value;
+  const borrador = document.getElementById("fJust").value.trim();
+  const btn = document.getElementById("btnGeminiJust");
+
+  if(!desc){
+    toast("Escribe primero la descripción de lo que necesitas para que Gemini pueda redactar la justificación.", "orange");
+    document.getElementById("fDesc").focus();
+    return;
+  }
+
+  const textoOriginal = btn.innerHTML;
+  btn.disabled = true;
+  btn.innerHTML = "⏳ Consultando a Gemini...";
+  toast("✨ Gemini IA está redactando la justificación técnica...", "green");
+
+  try {
+    const mejorada = await geminiMejorarJustificacion(tipo, desc, borrador, user.unidad, user.sede);
+    document.getElementById("fJust").value = mejorada;
+    toast("✓ Justificación técnica generada con éxito.");
+  } catch(e) {
+    toast("No se pudo conectar con Gemini, se aplicó plantilla asistida.");
+  } finally {
+    btn.disabled = false;
+    btn.innerHTML = textoOriginal;
+  }
+}
+
+function enviarSolicitud(){
+  const cat = document.getElementById("fCat").value;
+  const desc = document.getElementById("fDesc").value.trim();
+  const just = document.getElementById("fJust").value.trim();
+  const valorInput = document.getElementById("fValor") ? document.getElementById("fValor").value : "0";
+  const valor = Number(valorInput) || 0;
+  const err = document.getElementById("fErr");
+
+  if(!desc){
+    err.textContent = "Por favor escribe la descripción o título de lo que solicitas.";
+    err.classList.remove("hidden");
+    document.getElementById("fDesc").focus();
+    return;
+  }
+  if(cat === "financiera" && (!valor || valor <= 0)){
+    err.textContent = "Para compras y contratación, indica un presupuesto estimado mayor a 0.";
+    err.classList.remove("hidden");
+    document.getElementById("fValor").focus();
+    return;
+  }
+  if(!just){
+    err.textContent = "Por favor escribe la justificación. Puedes usar el botón morado de Gemini para redactarla.";
+    err.classList.remove("hidden");
+    document.getElementById("fJust").focus();
+    return;
+  }
+
+  const catObj = CATEGORIAS[cat] || CATEGORIAS.financiera;
+  const ccSel = document.getElementById("fPrograma") ? document.getElementById("fPrograma").value : user.cc;
+  const cObj = CENTROS[ccSel] || CENTROS[user.cc] || { nombre: user.unidad, sede: user.sede };
+
+  const id = crearSolicitud({
+    solicitante: {
+      nombre: user.nombre,
+      codigo: user.codigo,
+      rol: user.rol,
+      sede: cObj.sede,
+      unidad: cObj.nombre
+    },
+    cc: ccSel,
+    categoria: cat,
+    tipo: document.getElementById("fTipo").value,
+    descripcion: desc,
+    cantidad: Number(document.getElementById("fCant")?.value) || 1,
+    valor,
+    justificacion: just,
+    proveedorSugerido: document.getElementById("fProv") ? document.getElementById("fProv").value.trim() : "",
+    adjuntos: leerArchivos(document.getElementById("fAdj")),
+  });
+  conocidos[id] = 1;
+  toast(`✅ <b>${solId(id)}</b> radicada. Ya está en la bandeja de: <b>${catObj.encargado}</b> (${catObj.nombre}).`, "green");
+  verDetalle(id);
+}
+
+function verDetalle(id){
+  vista = { tipo: "detalle", id };
+  const appEl = document.getElementById("appLayout");
+  if(appEl){
+    appEl.classList.add("mobile-hide-aside");
+    appEl.classList.remove("mobile-hide-content");
+  }
+  const bN = document.getElementById("tabMobNueva");
+  const bL = document.getElementById("tabMobLista");
+  if(bN && bL){ bN.classList.remove("active"); bL.classList.add("active"); }
+  const s = dbLoad().solicitudes.find(x => x.id === id);
+  if(s && s.noLeidoEst){ dbUpdate(d => { d.solicitudes.find(x => x.id === id).noLeidoEst = false; }); }
+  conocidos[id] = s ? s.historial.length : 0;
+  render();
+}
+
+function renderDetalle(id){
+  const s = dbLoad().solicitudes.find(x => x.id === id);
+  if(!s){ vista = { tipo: "inicio" }; return renderInicio(); }
+  const e = ESTADOS[s.estado];
+  const catObj = CATEGORIAS[s.categoria || "financiera"] || CATEGORIAS.financiera;
+  const borrador = document.getElementById("rTexto")?.value || "";
+
+  const paso = s.estado === "info" ? ESTADOS[s.estadoPrevio || "radicada"].paso : e.paso;
+  const pasos = ["Radicada","En Revisión","En Trámite","Completada"];
+  const stepper = s.estado === "rechazada" ? "" : `<div class="stepper">${pasos.map((p,i) => {
+    const n = i + 1;
+    let cls = n < paso || (n === paso && s.estado === "orden") ? "done" : n === paso ? (s.estado === "info" ? "wait" : "current") : "";
+    return `<div class="step ${cls}"><div class="c">${cls==="done"?"✓":n}</div>${p}</div>`;
+  }).join("")}</div>`;
+
+  const ultimaPeticion = [...s.historial].reverse().find(h => h.autor === "financiera");
+  let banner = "";
+  if(s.estado === "info") banner = `
+    <div class="alert warn" style="margin:14px 0">
+      <h4>⚠️ ${catObj.encargado} necesita algo de ti para continuar</h4>
+      <div style="margin-bottom:10px">${esc(ultimaPeticion?.texto || "")}</div>
+      <div class="field"><textarea id="rTexto" placeholder="Escribe tu respuesta…">${esc(borrador)}</textarea></div>
+      <div style="display:flex;gap:10px;align-items:center;justify-content:space-between;flex-wrap:wrap">
+        <input id="rAdj" type="file" multiple>
+        <button class="btn orange" onclick="responder(${s.id})">Enviar respuesta ➤</button>
+      </div>
+    </div>`;
+  if(s.estado === "orden") banner = `
+    <div class="alert ok" style="margin:14px 0;display:flex;justify-content:space-between;align-items:center;gap:12px">
+      <div><h4>✅ ¡Trámite completado y aprobado!</h4>${s.oc ? `${esc(s.oc.numero)} · ${esc(s.oc.proveedor)} · ${fmt(s.oc.valor)}` : `Aprobado por ${catObj.encargado}`}</div>
+      ${s.oc ? `<button class="btn green" onclick="abrirOC(dbLoad().solicitudes.find(x=>x.id===${s.id}))">📄 Ver soporte digital</button>` : ""}
+    </div>`;
+  if(s.estado === "rechazada") banner = `<div class="alert bad" style="margin:14px 0"><h4>Solicitud no aprobada</h4>${esc(ultimaPeticion?.texto || "")}</div>`;
+
+  document.getElementById("view").innerHTML = `
+    <button class="mobile-back-btn" onclick="switchMobileTab('lista')">← Volver a mis solicitudes</button>
+    <div class="det-head">
+      <div><div class="page-title">${solId(s.id)}</div><div class="muted">Radicada el ${fecha(s.creada)}</div></div>
+      <span class="badge ${e.cls}" style="font-size:13px;padding:6px 12px">${e.est}</span>
+    </div>
+    <div class="card">${stepper}${banner}</div>
+    <div class="card">
+      <h3>📋 Datos de tu requerimiento</h3>
+      <dl class="kv">
+        <dt>Área y Destinatario</dt><dd><span class="badge ${catObj.badge}">${catObj.icono} ${catObj.nombre}</span> · <b>${catObj.encargado}</b></dd>
+        <dt>Tipo</dt><dd>${esc(s.tipo)}</dd>
+        <dt>Descripción</dt><dd>${esc(s.descripcion)}</dd>
+        <dt>Cantidad / Cupos</dt><dd>${esc(s.cantidad)}</dd>
+        <dt>Presupuesto estimado</dt><dd>${s.valor > 0 ? fmt(s.valor) + " COP" : "0 COP (Sin costo presupuestal directo)"}</dd>
+        <dt>Justificación</dt><dd style="font-weight:400">${esc(s.justificacion)}</dd>
+        <dt>Centro de costo</dt><dd>${esc(s.cc)} · ${esc(CENTROS[s.cc]?.nombre || "")}</dd>
+        ${s.proveedorSugerido ? `<dt>Proveedor / Destino sugerido</dt><dd>${esc(s.proveedorSugerido)}</dd>` : ""}
+        ${s.adjuntos && s.adjuntos.length ? `<dt>Adjuntos</dt><dd><div class="chips">${s.adjuntos.map(a => `<span class="chip">📎 ${esc(a.nombre)}</span>`).join("")}</div></dd>` : ""}
+      </dl>
+    </div>
+    <div class="card">
+      <h3>🕑 Historial y mensajes con ${catObj.encargado}</h3>
+      <div class="timeline">${s.historial.map(h => `
+        <div class="ev ${h.autor} ${h.auto?"auto":""}">
+          <small>${h.autor==="financiera" ? (catObj.encargado || "Dirección Encargada") : h.autor==="solicitante" ? "Tú" : "Sistema"} · ${fecha(h.ts)}</small>${esc(h.texto)}
+          ${(h.adjuntos||[]).map(a => `<div class="adj">📎 ${esc(a.nombre)}</div>`).join("")}
+        </div>`).join("")}
+      </div>
+    </div>`;
+}
+
+function responder(id){
+  const texto = document.getElementById("rTexto").value.trim();
+  const adj = leerArchivos(document.getElementById("rAdj"));
+  if(!texto && !adj.length){ toast("Escribe una respuesta o adjunta un archivo.", "orange"); return; }
+  responderSolicitante(id, texto || "Adjunto el documento solicitado.", adj);
+  conocidos[id] = (conocidos[id] || 0) + 1;
+  toast("Respuesta enviada. La Dirección Financiera fue notificada.", "green");
+  render();
+}
+
+/* ======================= TIEMPO REAL ======================= */
+onDbChange(() => {
+  if(!user) return;
+  misSolicitudes().forEach(s => {
+    const antes = conocidos[s.id] ?? s.historial.length;
+    if(s.historial.length > antes){
+      const ult = s.historial[s.historial.length - 1];
+      if(ult.autor === "financiera"){
+        toast(`🔔 <b>${solId(s.id)}</b> · ${ESTADOS[s.estado].est}<br><span style="opacity:.9">${esc(ult.texto.slice(0,110))}${ult.texto.length>110?"…":""}</span>`, s.estado==="info"?"orange":s.estado==="orden"?"green":"");
+        beep();
+      }
+      if(vista.id === s.id && s.noLeidoEst) dbUpdate(d => { d.solicitudes.find(x => x.id === s.id).noLeidoEst = false; });
+    }
+    conocidos[s.id] = s.historial.length;
+  });
+  render();
+});
+
+/* ======================= INICIO ======================= */
+cargarUnidades("APT-ING");
+if(user) {
+  iniciarApp();
+} else {
+  window.location.href = "index.html";
+}
+</script>
+</body>
+</html>
+
+
+

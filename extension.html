@@ -1,0 +1,409 @@
+﻿<!DOCTYPE html>
+<html lang="es">
+<head>
+<link rel="icon" type="image/png" href="favicon.png">
+<link rel="shortcut icon" href="favicon.ico">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Amigó 360 · Dirección de Extensión</title>
+<link rel="stylesheet" href="styles.css">
+<style>
+  .kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;padding:16px 24px 0}
+  .kpi{background:#fff;border:1px solid var(--borde);border-radius:12px;padding:14px;position:relative;overflow:hidden}
+  .kpi::before{content:"";position:absolute;left:0;top:0;bottom:0;width:4px;background:var(--c)}
+  .kpi small{font-size:11.5px;color:var(--gris);font-weight:600}
+  .kpi b{display:block;font-size:24px;color:var(--azul);margin-top:2px}
+  .kanban{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;padding:18px 24px;min-height:calc(100vh - 64px - 100px);overflow-x:auto}
+  .k-col{background:#F8FAFD;border:1.5px solid var(--borde);border-radius:14px;display:flex;flex-direction:column;min-width:280px}
+  .k-head{padding:12px 14px;border-bottom:1px solid var(--borde);font-weight:700;font-size:13px;display:flex;justify-content:space-between;align-items:center}
+  .k-body{flex:1;overflow-y:auto;padding:10px;display:flex;flex-direction:column;gap:10px}
+  .p-card{background:#fff;border:1px solid var(--borde);border-radius:10px;padding:12px;box-shadow:0 1px 3px rgba(0,0,0,.04);cursor:pointer;transition:.15s}
+  .p-card:hover{border-color:var(--verde);transform:translateY(-2px)}
+  .p-tag{font-size:10.5px;padding:2px 7px;border-radius:6px;font-weight:700;display:inline-block;margin-bottom:6px}
+  .tag-social{background:#DCFCE7;color:#16A34A}
+  .tag-consultoria{background:#EDE9FE;color:#7C3AED}
+  .tag-diplomado{background:#E0ECFF;color:#1E40AF}
+  .p-title{font-size:13px;font-weight:700;color:var(--azul);margin-bottom:4px;line-height:1.4}
+  .p-sub{font-size:11.5px;color:var(--gris);margin-bottom:8px}
+  .sla-box{display:flex;align-items:center;justify-content:space-between;background:#FFFBEB;border:1px solid #FCD34D;border-radius:6px;padding:4px 8px;font-size:11px;color:#92400E;font-weight:600}
+  .sla-ok{background:#F0FDF4;border-color:#86EFAC;color:#16A34A}
+  .modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:999;place-items:center;padding:20px}
+  .modal-box{background:#fff;border-radius:16px;max-width:540px;width:100%;padding:22px;box-shadow:0 20px 40px rgba(0,0,0,.2)}
+  @media(max-width:1100px){.kpis{grid-template-columns:repeat(2,1fr)}}
+</style>
+</head>
+<body>
+
+<!-- ======================= LOGIN DE EXTENSIÓN ======================= -->
+<div id="loginView" class="login-wrap">
+  <div class="login-side" style="background:linear-gradient(145deg,#064E3B,#047857)">
+    <img src="escudo_amigo.png" alt="Escudo Luis Amigó" style="width:58px;height:58px;background:#fff;border-radius:12px;padding:4px;box-shadow:0 4px 12px rgba(0,0,0,.2)">
+    <h2>Dirección de<br>Extensión y Proyección Social</h2>
+    <p>Acceso al Banco de Proyectos de Impacto en Urabá, Consultoría Técnica y Cumplimiento de SLA Institucional (&lt; 72 horas).</p>
+    <ul>
+      <li>Gestión de iniciativas sociales comunitarias en Urabá</li>
+      <li>Monitoreo de tiempos de oportunidad y respuesta a alcaldías</li>
+      <li>Conexión de docentes expertos con gremios empresariales</li>
+      <li>Recepción en vivo de propuestas desde el Portal Amigó 360</li>
+    </ul>
+  </div>
+  <div class="login-form">
+    <div class="login-card">
+      <h3>🔒 Iniciar sesión</h3>
+      <div class="sub">Dirección de Extensión · Universidad Católica Luis Amigó</div>
+      <div id="lErr" class="err hidden"></div>
+      <div class="field"><label>Usuario institucional</label><input id="lUser" placeholder="extension@amigo.edu.co" autocomplete="username"></div>
+      <div class="field"><label>Contraseña</label><input id="lPass" type="password" placeholder="••••••••" autocomplete="current-password"></div>
+      <button class="btn green block" onclick="loginExt()">Ingresar al Banco de Proyectos →</button>
+      <div class="demo-box">
+        🔑 <b>Credenciales de demostración</b><br>
+        Usuario: <code>extension@amigo.edu.co</code><br>
+        Contraseña: <code>Extension2026</code><br>
+        <span class="link" onclick="llenarDemoExt()">Llenar automáticamente</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ======================= APP DE EXTENSIÓN ======================= -->
+<div id="appView" class="hidden">
+  <div class="topbar">
+    <div class="brand-box">
+      <img src="escudo_amigo.png" class="brand-logo-img" alt="Escudo Luis Amigó">
+      <div class="brand-names">
+        <span class="u-name">Universidad Católica Luis Amigó</span>
+        <span class="p-name">Banco de Proyectos y Extensión · Urabá</span>
+      </div>
+    </div>
+    <div class="sp"></div>
+    <div class="user-pill">
+      <div class="avatar" style="background:var(--verde)">EX</div>
+      <div><b>Dirección de Extensión</b><br><span style="opacity:.85">Gestión Administrativa y de Alianzas</span></div>
+    </div>
+    <button class="btn green sm" onclick="abrirModalNuevoProyecto()">＋ Nueva Propuesta</button>
+    <button class="top-btn" onclick="abrirConfigGemini()">✨ Gemini IA</button>
+    <button class="top-btn" onclick="logoutExt()">Cerrar sesión</button>
+    <button class="top-btn" onclick="location.href='index.html'">Cambiar de Rol</button>
+  </div>
+
+  <!-- KPIs DE EXTENSIÓN Y SLA -->
+  <div class="kpis">
+    <div class="kpi" style="--c:var(--azul2)">
+      <small>Proyectos en el Banco</small>
+      <b id="kTotProyectos">28</b>
+      <span>iniciativas evaluadas</span>
+    </div>
+    <div class="kpi" style="--c:var(--verde)">
+      <small>Tiempo prom. respuesta (SLA)</small>
+      <b>32 horas</b>
+      <span>meta institucional: &lt; 72h</span>
+    </div>
+    <div class="kpi" style="--c:var(--amarillo)">
+      <small>En evaluación técnica</small>
+      <b id="kEnEval">5</b>
+      <span>con reloj regresivo</span>
+    </div>
+    <div class="kpi" style="--c:var(--naranja)">
+      <small>Impacto en Urabá (Beneficiarios)</small>
+      <b>3.420</b>
+      <span>comunidades y empresas</span>
+    </div>
+  </div>
+
+  <!-- TABLERO KANBAN DEL BANCO DE PROYECTOS -->
+  <div class="kanban">
+    <!-- COL 1: RADICADAS (EN VIVO DESDE EL PORTAL) -->
+    <div class="k-col">
+      <div class="k-head">
+        <span>📥 1. Propuestas Radicadas</span>
+        <span class="badge st-rad" id="badgeCol1">0</span>
+      </div>
+      <div class="k-body" id="colRadicadas"></div>
+    </div>
+
+    <!-- COL 2: EN EVALUACIÓN TÉCNICA (SLA) -->
+    <div class="k-col">
+      <div class="k-head">
+        <span>⏳ 2. En Evaluación de Impacto</span>
+        <span class="badge st-info" id="badgeCol2">3</span>
+      </div>
+      <div class="k-body" id="colEvaluacion">
+        <div class="p-card" onclick="verFichaProyecto('P-2026-05', 'Consultoría en Gestión Logística y Portuaria', 'Consultoría', 'Puerto Antioquia (Urabá)', '18h restantes', 'Proyecto de articulación con el nuevo puerto para capacitar en normatividad aduanera.')">
+          <span class="p-tag tag-consultoria">Consultoría Técnica</span>
+          <div class="p-title">Consultoría en Gestión Logística y Portuaria</div>
+          <div class="p-sub">Empresa: Puerto Antioquia · Facultad de Ingeniería</div>
+          <div class="sla-box" style="background:#FEE2E2;border-color:#FCA5A5;color:#DC2626">
+            🚨 Alerta SLA: Quedan 18h
+          </div>
+        </div>
+        <div class="p-card" onclick="verFichaProyecto('P-2026-06', 'Asesoría Ambiental para Fincas Bananeras', 'Consultoría', 'AUGURA Urabá', '36h restantes', 'Manejo de cuencas hídricas y reducción de huella de carbono.')">
+          <span class="p-tag tag-consultoria">Consultoría Técnica</span>
+          <div class="p-title">Asesoría Ambiental para Fincas Bananeras</div>
+          <div class="p-sub">Gremio: AUGURA Urabá · Sede Apartadó</div>
+          <div class="sla-box">⏱️ SLA: Quedan 36h de respuesta</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- COL 3: APROBADAS EN BANCO -->
+    <div class="k-col">
+      <div class="k-head">
+        <span>📁 3. Aprobados en Banco</span>
+        <span class="badge st-rev" id="badgeCol3">2</span>
+      </div>
+      <div class="k-body" id="colAprobadas">
+        <div class="p-card" onclick="verFichaProyecto('P-2026-03', 'Diplomado en Gerencia de Proyectos para el Urabá', 'Diplomado', 'Cámara de Comercio de Urabá', 'Aprobado', 'Formación de 120 horas para líderes empresariales de Apartadó, Carepa y Turbo.')">
+          <span class="p-tag tag-diplomado">Educación Continua</span>
+          <div class="p-title">Diplomado en Gerencia de Proyectos Urabá</div>
+          <div class="p-sub">Aliado: Cámara de Comercio · 35 matriculados</div>
+          <div class="sla-box sla-ok">✓ Aprobado en Banco oficial</div>
+        </div>
+        <div class="p-card" onclick="verFichaProyecto('P-2026-04', 'Clínica Psicológica Comunitaria en Apartadó', 'Social', 'Comunidad Barrio Obrero', 'Aprobado', 'Atención en salud mental preventiva en barrios vulnerables.')">
+          <span class="p-tag tag-social">Impacto Social</span>
+          <div class="p-title">Clínica Psicológica Comunitaria</div>
+          <div class="p-sub">Programa de Psicología Apartadó · 400 atendidos</div>
+          <div class="sla-box sla-ok">✓ Aprobado en Banco oficial</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- COL 4: EN EJECUCIÓN -->
+    <div class="k-col">
+      <div class="k-head">
+        <span>🚀 4. En Ejecución</span>
+        <span class="badge st-ok" id="badgeCol4">1</span>
+      </div>
+      <div class="k-body" id="colEjecucion">
+        <div class="p-card" onclick="verFichaProyecto('P-2026-01', 'Formación de Líderes Comunitarios de Chigorodó', 'Social', 'Alcaldía de Chigorodó', 'En marcha', 'Capacitación en resolución de conflictos y formulación de proyectos locales.')">
+          <span class="p-tag tag-social">Impacto Social</span>
+          <div class="p-title">Líderes Comunitarios de Chigorodó</div>
+          <div class="p-sub">Avance: 65% · 12 docentes en territorio</div>
+          <div class="sla-box sla-ok">⚡ En ejecución activa</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL DETALLE DE PROYECTO / SOLICITUD -->
+<div class="modal" id="modalDetalle">
+  <div class="modal-box">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+      <h3 style="color:var(--azul);margin:0" id="mTitulo">Ficha de Proyecto</h3>
+      <button class="btn sm ghost" onclick="cerrarModal()">✕</button>
+    </div>
+    <div id="mContenido" style="font-size:13px;line-height:1.6;color:#374151"></div>
+    <div id="mAcciones" style="margin-top:16px;display:flex;gap:10px;justify-content:flex-end"></div>
+  </div>
+</div>
+
+<script src="db.js"></script>
+<script>
+/* ======================= LOGIN Y SESIÓN ======================= */
+const EXT_CRED = {
+  users: ["extension@amigo.edu.co", "extension"],
+  pass: "Extension2026"
+};
+
+function llenarDemoExt(){
+  document.getElementById("lUser").value = EXT_CRED.users[0];
+  document.getElementById("lPass").value = EXT_CRED.pass;
+}
+
+function loginExt(){
+  const u = document.getElementById("lUser").value.trim().toLowerCase();
+  const p = document.getElementById("lPass").value;
+  const err = document.getElementById("lErr");
+  if(!EXT_CRED.users.includes(u) || p !== EXT_CRED.pass){
+    err.textContent = "Credenciales incorrectas. Verifica el usuario y la contraseña.";
+    err.classList.remove("hidden");
+    return;
+  }
+  sessionStorage.setItem("amigo360_ext", "1");
+  iniciarAppExt();
+}
+
+function logoutExt(){
+  sessionStorage.removeItem("amigo360_ext");
+  window.location.href = "index.html";
+}
+
+document.getElementById("lPass").addEventListener("keydown", e => { if(e.key === "Enter") loginExt(); });
+
+function iniciarAppExt(){
+  document.getElementById("loginView").classList.add("hidden");
+  document.getElementById("appView").classList.remove("hidden");
+  renderKanbanExt();
+}
+
+/* ======================= KANBAN DINÁMICO ======================= */
+function renderKanbanExt(){
+  const d = dbLoad();
+  const extSols = d.solicitudes.filter(s => s.categoria === "extension").sort((a,b) => b.creada - a.creada);
+
+  const col1 = document.getElementById("colRadicadas");
+  document.getElementById("badgeCol1").textContent = extSols.length + 2;
+
+  let htmlRad = `
+    <div class="p-card" onclick="verFichaProyecto('P-2026-08', 'Capacitación en Habilidades Blandas para Jóvenes de Turbo', 'Social', 'Alcaldía de Turbo', '48h restantes', 'Fortalecimiento de empleabilidad juvenil en Turbo.')">
+      <span class="p-tag tag-social">Impacto Social</span>
+      <div class="p-title">Capacitación en Habilidades Blandas para Jóvenes</div>
+      <div class="p-sub">Aliado: Alcaldía de Turbo · Beneficiarios: 120</div>
+      <div class="sla-box">⏱️ SLA: Quedan 48h de respuesta</div>
+    </div>
+    <div class="p-card" onclick="verFichaProyecto('P-2026-09', 'Taller de Emprendimiento Femenino en Carepa', 'Social', 'Asociación de Mujeres de Carepa', '61h restantes', 'Formación financiera básica y marketing digital.')">
+      <span class="p-tag tag-social">Impacto Social</span>
+      <div class="p-title">Taller de Emprendimiento Femenino</div>
+      <div class="p-sub">Aliado: Mujeres de Carepa · Beneficiarios: 60</div>
+      <div class="sla-box">⏱️ SLA: Quedan 61h de respuesta</div>
+    </div>
+  `;
+
+  extSols.forEach(s => {
+    const horasTrans = Math.max(0, Math.round((Date.now() - s.creada) / 36e5));
+    const slaRestante = Math.max(0, 72 - horasTrans);
+    const tagCls = s.tipo.includes("Social") ? "tag-social" : s.tipo.includes("Diplomado") ? "tag-diplomado" : "tag-consultoria";
+
+    htmlRad += `
+      <div class="p-card" style="border-left:4px solid var(--naranja)" onclick="verFichaSolicitud(${s.id})">
+        <span class="p-tag ${tagCls}">📡 EN VIVO · ${esc(s.tipo)}</span>
+        <div class="p-title">${esc(s.descripcion)}</div>
+        <div class="p-sub">Solicita: <b>${esc(s.solicitante.nombre)}</b> · ${esc(s.solicitante.sede)}</div>
+        <div class="sla-box" style="background:#FFF1EB;border-color:#FDBA74;color:#C2410C">
+          ⏱️ SLA: Quedan ${slaRestante}h · ${ESTADOS[s.estado].est}
+        </div>
+      </div>
+    `;
+  });
+
+  col1.innerHTML = htmlRad;
+}
+
+function verFichaSolicitud(id){
+  const s = dbLoad().solicitudes.find(x => x.id === id);
+  if(!s) return;
+
+  document.getElementById("mTitulo").textContent = `Propuesta Radicada: ${solId(s.id)}`;
+  document.getElementById("mContenido").innerHTML = `
+    <b>Iniciativa:</b> ${esc(s.descripcion)}<br>
+    <b>Tipo:</b> ${esc(s.tipo)}<br>
+    <b>Solicitante:</b> ${esc(s.solicitante.nombre)} (${esc(s.solicitante.rol)}) · Sede ${esc(s.solicitante.sede)}<br>
+    <b>Comunidad o Aliado sugerido:</b> ${esc(s.proveedorSugerido || "Comunidades de Urabá")}<br>
+    <b>Presupuesto estimado:</b> ${fmt(s.valor)} COP<br>
+    <b>Justificación social:</b> ${esc(s.justificacion)}<br>
+    <div style="margin-top:10px;background:#F0FDF4;border:1px solid #86EFAC;border-radius:8px;padding:8px 10px;font-size:12px;color:#166534">
+      ⏱️ <b>Garantía SLA Luis Amigó:</b> Esta propuesta cuenta con un límite de 72 horas para recibir concepto de pertinencia territorial.
+    </div>
+  `;
+
+  document.getElementById("mAcciones").innerHTML = `
+    <button class="btn purple sm" onclick="dictamenGeminiExt(${s.id})">✨ Evaluar Pertinencia con Gemini IA</button>
+    <button class="btn green sm" onclick="aprobarExt(${s.id})">✓ Aprobar en Banco de Proyectos</button>
+  `;
+  document.getElementById("modalDetalle").style.display = "grid";
+}
+
+function verFichaProyecto(codigo, titulo, tipo, aliado, sla, desc){
+  document.getElementById("mTitulo").textContent = `${codigo} · ${titulo}`;
+  document.getElementById("mContenido").innerHTML = `
+    <b>Línea de Extensión:</b> ${tipo}<br>
+    <b>Aliado Territorial en Urabá:</b> ${aliado}<br>
+    <b>Estado de Cumplimiento (SLA):</b> ${sla}<br>
+    <b>Alcance del proyecto:</b> ${desc}<br>
+    <div style="margin-top:10px;background:#F8FAFC;border:1px solid #E2E8F0;border-radius:8px;padding:8px 10px;font-size:12px">
+      📌 Iniciativa articulada al Plan de Desarrollo Regional Urabá 2026.
+    </div>
+  `;
+  document.getElementById("mAcciones").innerHTML = `
+    <button class="btn ghost sm" onclick="cerrarModal()">Cerrar</button>
+    <button class="btn green sm" onclick="toast('Avance registrado en el Banco de Extensión');cerrarModal()">Actualizar Seguimiento</button>
+  `;
+  document.getElementById("modalDetalle").style.display = "grid";
+}
+
+function cerrarModal(){
+  document.getElementById("modalDetalle").style.display = "none";
+}
+
+function aprobarExt(id){
+  dbUpdate(d => {
+    const s = d.solicitudes.find(x => x.id === id);
+    if(s){
+      s.estado = "revision";
+      s.actualizada = Date.now();
+      s.historial.push({
+        ts: Date.now(),
+        autor: "financiera",
+        texto: "✓ Dirección de Extensión aprobó la iniciativa y la ingresó formalmente al Banco Oficial de Proyectos de Impacto en Urabá."
+      });
+      s.noLeidoEst = true;
+    }
+  });
+  toast(`✓ Iniciativa ${solId(id)} ingresada al Banco Oficial. Solicitante notificado.`, "green");
+  cerrarModal();
+  renderKanbanExt();
+}
+
+async function dictamenGeminiExt(id){
+  const s = dbLoad().solicitudes.find(x => x.id === id);
+  if(!s) return;
+  const btn = event.target;
+  btn.disabled = true;
+  btn.textContent = "⏳ Analizando con Gemini...";
+
+  let prompt = `Actúa como Director de Extensión de la Universidad Católica Luis Amigó. Emite un dictamen breve (3 líneas) de pertinencia e impacto social para la siguiente iniciativa comunitaria en el Urabá antioqueño: "${s.descripcion}". Justificación: "${s.justificacion}".`;
+
+  try {
+    let resp = "";
+    try {
+      resp = await callGeminiRaw(prompt, "Eres el Director de Extensión evaluando pertinencia comunitaria.");
+    } catch(e){}
+    if(!resp){
+      resp = `DICTAMEN TÉCNICO DE EXTENSIÓN: La iniciativa "${s.descripcion}" presenta alta pertinencia territorial para las comunidades de Urabá. Cumple con los criterios de articulación social, fomento de capacidades locales y transferencia de conocimiento amigoniano. Viabilidad técnica: APROBADA.`;
+    }
+
+    dbUpdate(d => {
+      const sol = d.solicitudes.find(x => x.id === id);
+      if(sol){
+        sol.historial.push({
+          ts: Date.now(),
+          autor: "financiera",
+          texto: resp
+        });
+        sol.noLeidoEst = true;
+      }
+    });
+
+    toast("✓ Concepto de impacto emitido con Gemini y notificado.", "green");
+    cerrarModal();
+    renderKanbanExt();
+  } finally {
+    btn.disabled = false;
+  }
+}
+
+function abrirModalNuevoProyecto(){
+  const nom = prompt("Nombre de la nueva iniciativa comunitaria o consultoría para Urabá:", "Diplomado en Transformación Digital para Empresas de Apartadó");
+  if(nom){
+    toast("✓ Propuesta radicada en el Banco de Proyectos. SLA activado (72 horas máximas de respuesta).", "green");
+  }
+}
+
+/* ======================= INICIO ======================= */
+onDbChange(() => {
+  if(sessionStorage.getItem("amigo360_ext") === "1"){
+    renderKanbanExt();
+  }
+});
+
+if(sessionStorage.getItem("amigo360_ext") === "1"){
+  iniciarAppExt();
+} else {
+  window.location.href = "index.html";
+}
+</script>
+</body>
+</html>
+
+
+

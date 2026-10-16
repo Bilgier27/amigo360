@@ -1,0 +1,449 @@
+﻿<!DOCTYPE html>
+<html lang="es">
+<head>
+<link rel="icon" type="image/png" href="favicon.png">
+<link rel="shortcut icon" href="favicon.ico">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Amigó 360 · Dirección de Investigaciones</title>
+<link rel="stylesheet" href="styles.css">
+<style>
+  .kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;padding:16px 24px 0}
+  .kpi{background:#fff;border:1px solid var(--borde);border-radius:12px;padding:14px;position:relative;overflow:hidden}
+  .kpi::before{content:"";position:absolute;left:0;top:0;bottom:0;width:4px;background:var(--c)}
+  .kpi small{font-size:11.5px;color:var(--gris);font-weight:600}
+  .kpi b{display:block;font-size:24px;color:var(--azul);margin-top:2px}
+  .main-wrap{padding:18px 24px 24px}
+  .view-selector{display:flex;gap:10px;margin-bottom:16px;border-bottom:2px solid var(--borde);padding-bottom:10px;flex-wrap:wrap}
+  .v-btn{background:none;border:none;font-size:14.5px;font-weight:700;color:var(--gris);cursor:pointer;padding:8px 14px;border-radius:8px}
+  .v-btn.active{color:#fff;background:#7C3AED}
+  .researcher-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+  .r-card{background:#fff;border:1.5px solid var(--borde);border-radius:14px;padding:16px;box-shadow:0 2px 6px rgba(0,0,0,.04);display:flex;flex-direction:column}
+  .r-top{display:flex;gap:12px;align-items:center;margin-bottom:12px}
+  .r-avatar{width:46px;height:46px;border-radius:50%;background:linear-gradient(135deg,var(--azul),#4338CA);color:#fff;display:grid;place-items:center;font-weight:700;font-size:16px}
+  .r-name{font-size:14.5px;font-weight:700;color:var(--azul)}
+  .r-sede{font-size:11px;padding:2px 7px;border-radius:6px;font-weight:700}
+  .r-paper{background:#F8FAFD;border-left:3px solid var(--naranja);padding:8px 10px;border-radius:6px;font-size:12px;margin-bottom:8px}
+  .r-footer{margin-top:auto;display:flex;justify-content:space-between;align-items:center;border-top:1px solid #F1F4F8;padding-top:10px;font-size:11.5px}
+  .semi-table{width:100%;border-collapse:collapse;font-size:13px;background:#fff;border-radius:12px;overflow:hidden;border:1px solid var(--borde)}
+  .semi-table th{background:#F8FAFC;padding:10px 12px;text-align:left;color:var(--gris);font-size:12px}
+  .semi-table td{padding:10px 12px;border-bottom:1px solid #F1F4F8}
+  .inv-sol-card{background:#fff;border:1.5px solid var(--borde);border-radius:12px;padding:14px;margin-bottom:12px}
+  .inv-sol-card:hover{border-color:#7C3AED}
+  @media(max-width:1100px){.researcher-grid{grid-template-columns:1fr}.kpis{grid-template-columns:repeat(2,1fr)}}
+</style>
+</head>
+<body>
+
+<!-- ======================= LOGIN DE NATALY RESTREPO ======================= -->
+<div id="loginView" class="login-wrap">
+  <div class="login-side" style="background:linear-gradient(145deg,#3B0764,#581C87)">
+    <img src="escudo_amigo.png" alt="Escudo Luis Amigó" style="width:58px;height:58px;background:#fff;border-radius:12px;padding:4px;box-shadow:0 4px 12px rgba(0,0,0,.2)">
+    <h2>Dirección de<br>Investigaciones</h2>
+    <p>Acceso exclusivo para la Directora Nataly Restrepo Restrepo, vicerrectoría e investigadores principales.</p>
+    <ul>
+      <li>Gestión de semilleros y estudiantes investigadores de Urabá y Medellín</li>
+      <li>Seguimiento a proyectos con financiación MinCiencias</li>
+      <li>Micrositio web público de investigadores y producción indexada</li>
+      <li>Recepción en vivo de solicitudes y postulaciones desde el Portal 360</li>
+    </ul>
+  </div>
+  <div class="login-form">
+    <div class="login-card">
+      <h3>🔒 Iniciar sesión</h3>
+      <div class="sub">Dirección de Investigaciones · Universidad Católica Luis Amigó</div>
+      <div id="lErr" class="err hidden"></div>
+      <div class="field"><label>Usuario institucional</label><input id="lUser" placeholder="nataly.restrepo@amigo.edu.co" autocomplete="username"></div>
+      <div class="field"><label>Contraseña</label><input id="lPass" type="password" placeholder="••••••••" autocomplete="current-password"></div>
+      <button class="btn purple block" onclick="loginInv()">Ingresar al Sistema Científico →</button>
+      <div class="demo-box">
+        🔑 <b>Credenciales de demostración</b><br>
+        Usuario: <code>nataly.restrepo@amigo.edu.co</code><br>
+        Contraseña: <code>Investiga2026</code><br>
+        <span class="link" onclick="llenarDemoInv()">Llenar automáticamente</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ======================= APP DE INVESTIGACIONES ======================= -->
+<div id="appView" class="hidden">
+  <div class="topbar">
+    <div class="brand-box">
+      <img src="escudo_amigo.png" class="brand-logo-img" alt="Escudo Luis Amigó">
+      <div class="brand-names">
+        <span class="u-name">Universidad Católica Luis Amigó</span>
+        <span class="p-name">Dirección de Investigaciones · Nataly Restrepo</span>
+      </div>
+    </div>
+    <div class="sp"></div>
+    <div class="user-pill">
+      <div class="avatar" style="background:#7C3AED">NR</div>
+      <div><b>Nataly Restrepo Restrepo</b><br><span style="opacity:.85">Directora de Investigaciones</span></div>
+    </div>
+    <button class="top-btn" onclick="abrirConfigGemini()">✨ Gemini IA</button>
+    <button class="top-btn" onclick="logoutInv()">Cerrar sesión</button>
+    <button class="top-btn" onclick="location.href='index.html'">Cambiar de Rol</button>
+  </div>
+
+  <!-- KPIs DE INVESTIGACIÓN -->
+  <div class="kpis">
+    <div class="kpi" style="--c:#7C3AED">
+      <small>Semilleros de investigación activos</small>
+      <b>18</b>
+      <span>Sedes Medellín y Apartadó</span>
+    </div>
+    <div class="kpi" style="--c:var(--azul2)">
+      <small>Estudiantes semilleristas</small>
+      <b id="kEstSemilleristas">142</b>
+      <span>con horas y actas registradas</span>
+    </div>
+    <div class="kpi" style="--c:var(--verde)">
+      <small>Proyectos con financiación</small>
+      <b>26</b>
+      <span>articulados a compras</span>
+    </div>
+    <div class="kpi" style="--c:var(--naranja)">
+      <small>Solicitudes radicadas</small>
+      <b id="kSolInv">0</b>
+      <span>postulaciones en vivo</span>
+    </div>
+  </div>
+
+  <div class="main-wrap">
+    <!-- SELECTOR DE VISTA -->
+    <div class="view-selector">
+      <button class="v-btn active" id="btnV0" onclick="verSeccionInv('postulaciones')">
+        📥 1. Postulaciones y Solicitudes en Vivo (<span id="countSolInv">0</span>)
+      </button>
+      <button class="v-btn" id="btnV1" onclick="verSeccionInv('semilleros')">
+        🔬 2. Semilleros y Proyectos MinCiencias
+      </button>
+      <button class="v-btn" id="btnV2" onclick="verSeccionInv('micrositio')">
+        🌐 3. Micrositio Web de Investigadores (Vitrina Pública)
+      </button>
+    </div>
+
+    <!-- SECCIÓN 0: SOLICITUDES EN VIVO DE SEMILLEROS -->
+    <div id="secPostulaciones">
+      <div class="card" style="border-left:4px solid #7C3AED">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+          <div>
+            <h3 style="color:#7C3AED;margin:0">📥 Requerimientos y Postulaciones de Semilleristas</h3>
+            <p style="font-size:12px;color:var(--gris);margin:3px 0 0">Postulaciones a semilleros, requerimientos de reactivos y proyectos desde el Portal 360</p>
+          </div>
+          <button class="btn sm ghost" onclick="renderInvSolicitudes()">🔄 Actualizar</button>
+        </div>
+        <div id="listaSolInv"></div>
+      </div>
+    </div>
+
+    <!-- SECCIÓN 1: SISTEMA DE DATOS INTERNO (SEMILLEROS Y PROYECTOS) -->
+    <div id="secSemilleros" class="hidden">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+        <div>
+          <h3 style="color:var(--azul);font-size:16px">Semilleros de Investigación Activos</h3>
+          <p style="font-size:12.5px;color:var(--gris)">Registro unificado de estudiantes, actas, proyectos y entregables para MinCiencias</p>
+        </div>
+        <button class="btn purple sm" onclick="toast('Nuevo semillero registrado con asignación de presupuesto')">＋ Inscribir Semillero</button>
+      </div>
+
+      <table class="semi-table">
+        <thead>
+          <tr>
+            <th>Semillero</th>
+            <th>Sede</th>
+            <th>Programa</th>
+            <th>Docente Líder</th>
+            <th>Estudiantes</th>
+            <th>Proyecto MinCiencias Vinculado</th>
+            <th>Acción</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><b>SIDET - Desarrollo Tecnológico y Software</b></td>
+            <td><span class="badge" style="background:#FFF1EB;color:var(--naranja)">Apartadó</span></td>
+            <td>Ing. de Sistemas</td>
+            <td>Ing. Andrés Gómez</td>
+            <td><b>14 estudiantes</b></td>
+            <td>Automatización e IoT para el Agro en Urabá</td>
+            <td><button class="btn ghost sm" onclick="toast('Descargando acta de avance del semillero')">Ver actas</button></td>
+          </tr>
+          <tr>
+            <td><b>PSICO-URABÁ - Psicología Social Comunitaria</b></td>
+            <td><span class="badge" style="background:#FFF1EB;color:var(--naranja)">Apartadó</span></td>
+            <td>Psicología</td>
+            <td>Dra. Diana Palacios</td>
+            <td><b>22 estudiantes</b></td>
+            <td>Salud mental y resiliencia en jóvenes de Urabá</td>
+            <td><button class="btn ghost sm" onclick="toast('Descargando acta de avance del semillero')">Ver actas</button></td>
+          </tr>
+          <tr>
+            <td><b>COGNITIO - Neurociencias y Comportamiento</b></td>
+            <td><span class="badge" style="background:#EEF2FF;color:#4338CA">Medellín</span></td>
+            <td>Psicología</td>
+            <td>Dra. Laura Restrepo</td>
+            <td><b>18 estudiantes</b></td>
+            <td>Evaluación neuropsicológica (Reactivos adquiridos)</td>
+            <td><button class="btn ghost sm" onclick="toast('Descargando acta de avance del semillero')">Ver actas</button></td>
+          </tr>
+          <tr>
+            <td><b>COMMUNICARE - Medios y Sociedad</b></td>
+            <td><span class="badge" style="background:#EEF2FF;color:#4338CA">Medellín</span></td>
+            <td>Comunicación Social</td>
+            <td>Dr. Felipe Jaramillo</td>
+            <td><b>11 estudiantes</b></td>
+            <td>Narrativas transmedia en el conflicto regional</td>
+            <td><button class="btn ghost sm" onclick="toast('Descargando acta de avance del semillero')">Ver actas</button></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- SECCIÓN 2: MICROSITIO WEB DE INVESTIGADORES (PÚBLICO Y VISIBLE) -->
+    <div id="secMicrositio" class="hidden">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
+        <div>
+          <h3 style="color:var(--azul);font-size:16px">Vitrina Científica Institucional (Micrositio)</h3>
+          <p style="font-size:12.5px;color:var(--gris)">Portal público para visibilizar ante pares internacionales y MinCiencias la producción de nuestros docentes</p>
+        </div>
+        <div>
+          <button class="btn ghost sm" onclick="toast('Exportando reporte estructurado de producción para MinCiencias')">📊 Exportar a MinCiencias</button>
+        </div>
+      </div>
+
+      <div class="researcher-grid">
+        <!-- INVESTIGADOR 1 (APARTADÓ) -->
+        <div class="r-card">
+          <div class="r-top">
+            <div class="r-avatar">AG</div>
+            <div>
+              <div class="r-name">Ing. Andrés Gómez</div>
+              <div style="font-size:11.5px;color:var(--gris)">Facultad de Ingenierías</div>
+              <span class="r-sede" style="background:#FFF1EB;color:var(--naranja)">Sede Apartadó</span>
+            </div>
+          </div>
+          <div class="r-paper">
+            <b>Artículo Scopus Q2:</b><br>
+            <i>"Transformación digital y optimización logística en puertos inteligentes: Caso Urabá Antioquia"</i> (2026)
+          </div>
+          <div class="r-footer">
+            <span style="color:#059669;font-weight:700">Investigador Asociado MinCiencias</span>
+            <a href="#" style="color:var(--azul2);font-weight:600" onclick="alert('Abriendo CvLAC institucional...');return false;">CvLAC ↗</a>
+          </div>
+        </div>
+
+        <!-- INVESTIGADOR 2 (APARTADÓ) -->
+        <div class="r-card">
+          <div class="r-top">
+            <div class="r-avatar" style="background:#DC5028">DP</div>
+            <div>
+              <div class="r-name">Dra. Diana Palacios</div>
+              <div style="font-size:11.5px;color:var(--gris)">Programa de Psicología</div>
+              <span class="r-sede" style="background:#FFF1EB;color:var(--naranja)">Sede Apartadó</span>
+            </div>
+          </div>
+          <div class="r-paper">
+            <b>Capítulo de Libro Resultado de Inv.:</b><br>
+            <i>"Tejido social, memoria histórica y resiliencia en comunidades de Urabá"</i> (Editorial Amigoniana, 2025)
+          </div>
+          <div class="r-footer">
+            <span style="color:#059669;font-weight:700">Investigadora Senior MinCiencias</span>
+            <a href="#" style="color:var(--azul2);font-weight:600" onclick="alert('Abriendo CvLAC institucional...');return false;">CvLAC ↗</a>
+          </div>
+        </div>
+
+        <!-- INVESTIGADOR 3 (MEDELLÍN) -->
+        <div class="r-card">
+          <div class="r-top">
+            <div class="r-avatar" style="background:#4338CA">LR</div>
+            <div>
+              <div class="r-name">Dra. Laura Restrepo</div>
+              <div style="font-size:11.5px;color:var(--gris)">Facultad de Psicología y CS</div>
+              <span class="r-sede" style="background:#EEF2FF;color:#4338CA">Sede Medellín</span>
+            </div>
+          </div>
+          <div class="r-paper">
+            <b>Artículo WoS / Q1:</b><br>
+            <i>"Biomarcadores cognitivos y adaptación emocional en jóvenes universitarios"</i> (International Journal of Psychology, 2026)
+          </div>
+          <div class="r-footer">
+            <span style="color:#059669;font-weight:700">Investigadora Asociada MinCiencias</span>
+            <a href="#" style="color:var(--azul2);font-weight:600" onclick="alert('Abriendo CvLAC institucional...');return false;">CvLAC ↗</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="db.js"></script>
+<script>
+/* ======================= LOGIN Y SESIÓN ======================= */
+const INV_CRED = {
+  users: ["nataly.restrepo@amigo.edu.co", "nataly.restrepo"],
+  pass: "Investiga2026"
+};
+
+function llenarDemoInv(){
+  document.getElementById("lUser").value = INV_CRED.users[0];
+  document.getElementById("lPass").value = INV_CRED.pass;
+}
+
+function loginInv(){
+  const u = document.getElementById("lUser").value.trim().toLowerCase();
+  const p = document.getElementById("lPass").value;
+  const err = document.getElementById("lErr");
+  if(!INV_CRED.users.includes(u) || p !== INV_CRED.pass){
+    err.textContent = "Credenciales incorrectas. Verifica el usuario y la contraseña.";
+    err.classList.remove("hidden");
+    return;
+  }
+  sessionStorage.setItem("amigo360_inv", "1");
+  iniciarAppInv();
+}
+
+function logoutInv(){
+  sessionStorage.removeItem("amigo360_inv");
+  window.location.href = "index.html";
+}
+
+document.getElementById("lPass").addEventListener("keydown", e => { if(e.key === "Enter") loginInv(); });
+
+function iniciarAppInv(){
+  document.getElementById("loginView").classList.add("hidden");
+  document.getElementById("appView").classList.remove("hidden");
+  renderInvSolicitudes();
+}
+
+/* ======================= VISTAS ======================= */
+function verSeccionInv(sec){
+  document.getElementById("btnV0").classList.toggle("active", sec === "postulaciones");
+  document.getElementById("btnV1").classList.toggle("active", sec === "semilleros");
+  document.getElementById("btnV2").classList.toggle("active", sec === "micrositio");
+
+  document.getElementById("secPostulaciones").classList.toggle("hidden", sec !== "postulaciones");
+  document.getElementById("secSemilleros").classList.toggle("hidden", sec !== "semilleros");
+  document.getElementById("secMicrositio").classList.toggle("hidden", sec !== "micrositio");
+}
+
+/* ======================= SOLICITUDES EN TIEMPO REAL ======================= */
+function renderInvSolicitudes(){
+  const d = dbLoad();
+  const solicitudes = d.solicitudes.filter(s => s.categoria === "investigacion").sort((a,b) => b.actualizada - a.actualizada);
+
+  document.getElementById("kSolInv").textContent = solicitudes.length;
+  document.getElementById("countSolInv").textContent = solicitudes.length;
+
+  const cont = document.getElementById("listaSolInv");
+  if(!solicitudes.length){
+    cont.innerHTML = `<div style="text-align:center;padding:24px;color:var(--gris);font-size:13px">
+      No hay solicitudes de investigación pendientes.<br>
+      Radica una postulación o requerimiento en el <b>Portal del Solicitante</b> para verla llegar aquí en vivo.
+    </div>`;
+    return;
+  }
+
+  cont.innerHTML = solicitudes.map(s => `
+    <div class="inv-sol-card">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px">
+        <div>
+          <span style="font-size:11px;font-weight:700;color:#7C3AED;letter-spacing:.05em">${solId(s.id)}</span>
+          <h4 style="margin:2px 0;color:var(--azul);font-size:15px">${esc(s.descripcion)}</h4>
+          <span class="muted" style="font-size:12px">Postulante: <b>${esc(s.solicitante.nombre)}</b> (${esc(s.solicitante.rol)}) · Sede ${esc(s.solicitante.sede)}</span>
+        </div>
+        <span class="badge ${ESTADOS[s.estado].cls}">${ESTADOS[s.estado].est}</span>
+      </div>
+      <div style="background:#F8FAFC;border-radius:8px;padding:8px 10px;font-size:12.5px;margin-bottom:10px;line-height:1.5">
+        <b>Modalidad:</b> ${esc(s.tipo)}<br>
+        <b>Justificación / Interés científico:</b> ${esc(s.justificacion)}<br>
+        <span class="muted" style="font-size:11px">Radicada el ${fecha(s.creada)}</span>
+      </div>
+      <div style="display:flex;gap:8px;justify-content:flex-end;align-items:center">
+        ${s.estado === "radicada" ? `
+          <button class="btn sm purple" onclick="dictaminarInvGemini(${s.id})">✨ Emitir Concepto con Gemini IA</button>
+          <button class="btn sm green" onclick="aprobarInv(${s.id})">✓ Aprobar en Semillero</button>
+        ` : `
+          <span style="font-size:12px;color:var(--verde);font-weight:600">✓ Aprobado por Nataly Restrepo</span>
+        `}
+      </div>
+    </div>
+  `).join("");
+}
+
+function aprobarInv(id){
+  dbUpdate(d => {
+    const s = d.solicitudes.find(x => x.id === id);
+    if(s){
+      s.estado = "orden";
+      s.actualizada = Date.now();
+      s.historial.push({
+        ts: Date.now(),
+        autor: "financiera",
+        texto: "✓ Nataly Restrepo Restrepo (Directora de Investigaciones) aprobó tu postulación. Has sido admitido(a) formalmente en el semillero de investigación."
+      });
+      s.noLeidoEst = true;
+    }
+  });
+  toast(`✓ Solicitud ${solId(id)} aprobada con aval oficial de Investigaciones.`, "green");
+  renderInvSolicitudes();
+}
+
+async function dictaminarInvGemini(id){
+  const s = dbLoad().solicitudes.find(x => x.id === id);
+  if(!s) return;
+  const btn = event.target;
+  btn.disabled = true;
+  btn.textContent = "⏳ Analizando con Gemini...";
+
+  let prompt = `Actúa como Nataly Restrepo Restrepo, Directora de Investigaciones de la Universidad Católica Luis Amigó. Redacta un concepto académico breve (2 párrafos) aprobando y felicitando al estudiante ${s.solicitante.nombre} (${s.solicitante.sede}) por su interés en investigar: "${s.descripcion}". Indícale las responsabilidades de rigurosidad ética y publicación científica.`;
+
+  try {
+    let resp = "";
+    try {
+      resp = await callGeminiRaw(prompt, "Eres Nataly Restrepo Restrepo, Directora de Investigaciones.");
+    } catch(e){}
+    if(!resp){
+      resp = `Estimado(a) ${s.solicitante.nombre}: Como Directora de Investigaciones celebro tu iniciativa y vocación científica con "${s.descripcion}". La formación investigativa es un pilar fundamental en la Luis Amigó para transformar los territorios, especialmente desde el potencial del Urabá y Antioquia. Tu propuesta cuenta con el aval inicial de la Dirección y se te asignará tutor metodológico.`;
+    }
+
+    dbUpdate(d => {
+      const sol = d.solicitudes.find(x => x.id === id);
+      if(sol){
+        sol.estado = "revision";
+        sol.actualizada = Date.now();
+        sol.historial.push({
+          ts: Date.now(),
+          autor: "financiera",
+          texto: resp
+        });
+        sol.noLeidoEst = true;
+      }
+    });
+
+    toast("✓ Concepto redactado con Gemini IA y notificado al semillerista.", "green");
+    renderInvSolicitudes();
+  } finally {
+    btn.disabled = false;
+  }
+}
+
+/* ======================= INICIO ======================= */
+onDbChange(() => {
+  if(sessionStorage.getItem("amigo360_inv") === "1"){
+    renderInvSolicitudes();
+  }
+});
+
+if(sessionStorage.getItem("amigo360_inv") === "1"){
+  iniciarAppInv();
+} else {
+  window.location.href = "index.html";
+}
+</script>
+</body>
+</html>
+
+
+

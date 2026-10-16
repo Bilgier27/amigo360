@@ -1,0 +1,462 @@
+﻿<!DOCTYPE html>
+<html lang="es">
+<head>
+<link rel="icon" type="image/png" href="favicon.png">
+<link rel="shortcut icon" href="favicon.ico">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Amigó 360 · Centro de Control Financiero</title>
+<link rel="stylesheet" href="styles.css">
+<style>
+  .kpis{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;padding:16px 20px 0}
+  .kpi{background:#fff;border:1px solid var(--borde);border-radius:12px;padding:12px 14px;position:relative;overflow:hidden}
+  .kpi::before{content:"";position:absolute;left:0;top:0;bottom:0;width:4px;background:var(--c)}
+  .kpi small{font-size:11.5px;color:var(--gris);font-weight:600}
+  .kpi b{display:block;font-size:22px;color:var(--azul);margin-top:2px}
+  .work{display:grid;grid-template-columns:210px 360px 1fr;gap:14px;padding:14px 20px 20px;height:calc(100vh - 64px - 96px)}
+  .pane{background:#fff;border:1px solid var(--borde);border-radius:14px;display:flex;flex-direction:column;min-height:0;overflow:hidden}
+  .pane-h{padding:12px 14px;border-bottom:1px solid var(--borde);font-weight:700;color:var(--azul);font-size:13px;display:flex;justify-content:space-between;align-items:center;gap:8px}
+  .filters{padding:8px}
+  .filter{display:flex;justify-content:space-between;align-items:center;padding:9px 11px;border-radius:9px;cursor:pointer;font-size:13px;margin-bottom:2px}
+  .filter:hover{background:var(--fondo)}
+  .filter.active{background:var(--azul);color:#fff}
+  .filter .n{background:var(--fondo);color:var(--texto);font-size:11px;font-weight:700;padding:2px 8px;border-radius:999px}
+  .filter.active .n{background:rgba(255,255,255,.2);color:#fff}
+  .filter .n.hot{background:var(--naranja);color:#fff}
+  .search{padding:10px;border-bottom:1px solid var(--borde)}
+  .search input{width:100%;border:1.5px solid var(--borde);border-radius:9px;padding:8px 11px;font-size:13px;outline:none}
+  .scroll{flex:1;overflow:auto}
+  .det{flex:1;overflow:auto;padding:18px}
+  .det-empty{display:grid;place-items:center;height:100%;color:var(--gris);text-align:center;padding:30px}
+  .det-head{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:14px;gap:12px}
+  .det-head h2{color:var(--azul);font-size:20px}
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+  .bud{font-size:13px}
+  .bud .r{display:flex;justify-content:space-between;padding:5px 0;border-bottom:1px dashed #E5E7EB}
+  .bud .r:last-child{border:none}
+  .bud .tot{font-weight:800;font-size:14px}
+  .barra{height:10px;background:var(--fondo);border-radius:999px;overflow:hidden;margin:10px 0 4px;display:flex}
+  .barra i{display:block;height:100%}
+  .actions{background:#F8FAFD;border:1.5px solid #D5E2F3;border-radius:14px;padding:16px;margin-top:14px}
+  .actions h3{font-size:14px;color:var(--azul);margin-bottom:4px}
+  .actions .sub{font-size:12px;color:var(--gris);margin-bottom:12px}
+  .act-row{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:10px}
+  .act-row select,.act-row input{border:1.5px solid var(--borde);border-radius:9px;padding:8px 10px;font-size:13px;font-family:inherit;outline:none;background:#fff}
+  .act-row select{flex:1;min-width:220px}
+  .act-label{font-size:12px;font-weight:700;color:#374151;margin:12px 0 6px}
+  .nota textarea{width:100%;border:1.5px solid var(--borde);border-radius:9px;padding:9px 11px;font-size:13px;font-family:inherit;min-height:56px;resize:vertical;outline:none}
+  .reset-link{font-size:11px;color:var(--gris);cursor:pointer;text-decoration:underline;padding:10px 14px}
+  .tag-resp{background:#FFEDD5;color:#C2410C;font-size:10.5px;font-weight:700;padding:2px 7px;border-radius:6px}
+  @media(max-width:1200px){.work{grid-template-columns:1fr;height:auto}.kpis{grid-template-columns:repeat(2,1fr)}.pane{max-height:none}}
+</style>
+</head>
+<body>
+
+<!-- ======================= LOGIN DE LUZ MARLY ======================= -->
+<div id="loginView" class="login-wrap">
+  <div class="login-side">
+    <img src="escudo_amigo.png" alt="Escudo Luis Amigó" style="width:58px;height:58px;background:#fff;border-radius:12px;padding:4px;box-shadow:0 4px 12px rgba(0,0,0,.2)">
+    <h2>Centro de Control<br>Financiero</h2>
+    <p>Acceso exclusivo de la Dirección Financiera. Aquí llegan, en tiempo real, todas las solicitudes de compra y contratación de las sedes, listas para trabajar.</p>
+    <ul>
+      <li>Cero correos y cero papeles</li>
+      <li>Validación de presupuesto automática por centro de costo</li>
+      <li>Respuestas al solicitante con un clic, sin chatear</li>
+      <li>Orden de compra digital firmada al instante</li>
+    </ul>
+  </div>
+  <div class="login-form">
+    <div class="login-card">
+      <h3>🔒 Iniciar sesión</h3>
+      <div class="sub">Dirección Financiera · Universidad Católica Luis Amigó</div>
+      <div id="lErr" class="err hidden"></div>
+      <div class="field"><label>Usuario institucional</label><input id="lUser" placeholder="usuario@amigo.edu.co" autocomplete="username"></div>
+      <div class="field"><label>Contraseña</label><input id="lPass" type="password" placeholder="••••••••" autocomplete="current-password"></div>
+      <button class="btn primary block" onclick="login()">Ingresar</button>
+      <div class="demo-box">
+        🔑 <b>Credenciales de demostración</b><br>
+        Usuario: <code>luz.alzate@amigo.edu.co</code><br>
+        Contraseña: <code>Financiera2026</code><br>
+        <span class="link" onclick="llenarDemo()">Llenar automáticamente</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ======================= APP DE LUZ MARLY ======================= -->
+<div id="appView" class="hidden">
+  <div class="topbar">
+    <div class="brand-box">
+      <img src="escudo_amigo.png" class="brand-logo-img" alt="Escudo Luis Amigó">
+      <div class="brand-names">
+        <span class="u-name">Universidad Católica Luis Amigó</span>
+        <span class="p-name">Centro de Control Financiero · Luz Marly Alzate</span>
+      </div>
+    </div>
+    <div class="sp"></div>
+    <div class="bell" title="Solicitudes sin leer" onclick="setFiltro('nuevas')">🔔<b id="bellN">0</b></div>
+    <div class="user-pill"><div class="avatar">LM</div><div><b>Luz Marly Alzate Grajales</b><br><span style="opacity:.85">Directora Financiera · Medellín</span></div></div>
+    <button class="top-btn" onclick="abrirConfigGemini()" title="Configurar API Key de Gemini">✨ Gemini IA</button>
+    <button class="top-btn" onclick="logout()">Cerrar sesión</button>
+  </div>
+
+  <div class="kpis">
+    <div class="kpi" style="--c:var(--naranja)"><small>Nuevas por revisar</small><b id="kNuevas">0</b></div>
+    <div class="kpi" style="--c:var(--amarillo)"><small>Esperando al solicitante</small><b id="kInfo">0</b></div>
+    <div class="kpi" style="--c:var(--azul2)"><small>En proceso</small><b id="kProc">0</b></div>
+    <div class="kpi" style="--c:var(--verde)"><small>Órdenes emitidas</small><b id="kOrden">0</b></div>
+    <div class="kpi" style="--c:var(--morado)"><small>Monto en trámite</small><b id="kMonto">$0</b></div>
+  </div>
+
+  <div class="work">
+    <!-- Filtros -->
+    <div class="pane">
+      <div class="pane-h">Bandejas</div>
+      <div class="filters scroll" id="filtros"></div>
+      <div class="reset-link" onclick="reiniciar()">↺ Reiniciar datos de la demo</div>
+    </div>
+
+    <!-- Lista -->
+    <div class="pane">
+      <div class="pane-h"><span id="listTitle">Todas</span><span class="muted" id="listCount" style="font-weight:400"></span></div>
+      <div class="search"><input id="q" placeholder="🔍 Buscar por nombre, radicado, sede…" oninput="renderLista()"></div>
+      <div class="scroll" id="lista"></div>
+    </div>
+
+    <!-- Detalle / espacio de trabajo -->
+    <div class="pane"><div class="det" id="detalle"></div></div>
+  </div>
+</div>
+
+<script src="db.js"></script>
+<script>
+/* ======================= LOGIN (DEMO) ======================= */
+const CRED = { users: ["luz.alzate@amigo.edu.co", "luz.alzate"], pass: "Financiera2026" };
+function llenarDemo(){ document.getElementById("lUser").value = CRED.users[0]; document.getElementById("lPass").value = CRED.pass; }
+function login(){
+  const u = document.getElementById("lUser").value.trim().toLowerCase();
+  const p = document.getElementById("lPass").value;
+  const err = document.getElementById("lErr");
+  if(!CRED.users.includes(u) || p !== CRED.pass){ err.textContent = "Usuario o contraseña incorrectos."; err.classList.remove("hidden"); return; }
+  sessionStorage.setItem("amigo360_fin", "1");
+  iniciar();
+}
+function logout(){ sessionStorage.removeItem("amigo360_fin"); window.location.href = "index.html"; }
+document.getElementById("lPass").addEventListener("keydown", e => { if(e.key === "Enter") login(); });
+
+/* ======================= ESTADO ======================= */
+const esFin = s => (!s.categoria || s.categoria === "financiera");
+let filtro = "todas", selId = null, nota = "";
+let conocidos = {};   // id -> nº de eventos (para detectar novedades)
+
+const FILTROS = [
+  ["todas",      "📥 Todas",                 s => esFin(s)],
+  ["nuevas",     "🔔 Sin leer",              s => esFin(s) && s.noLeidoFin],
+  ["radicada",   "🆕 Por revisar",           s => esFin(s) && s.estado === "radicada"],
+  ["info",       "⏳ Esperando solicitante", s => esFin(s) && s.estado === "info"],
+  ["revision",   "💰 Presupuesto aprobado",  s => esFin(s) && s.estado === "revision"],
+  ["cotizacion", "📑 En cotización",         s => esFin(s) && s.estado === "cotizacion"],
+  ["orden",      "✅ Órdenes emitidas",      s => esFin(s) && s.estado === "orden"],
+  ["rechazada",  "✕ Rechazadas",             s => esFin(s) && s.estado === "rechazada"],
+];
+
+function iniciar(){
+  document.getElementById("loginView").classList.add("hidden");
+  document.getElementById("appView").classList.remove("hidden");
+  dbLoad().solicitudes.filter(esFin).forEach(s => conocidos[s.id] = s.historial.length);
+  render();
+}
+
+/* ======================= RENDER ======================= */
+function render(){ renderKpis(); renderFiltros(); renderLista(); renderDetalle(); }
+
+function renderKpis(){
+  const d = dbLoad(), S = d.solicitudes.filter(esFin);
+  const sinLeer = S.filter(s => s.noLeidoFin).length;
+  document.getElementById("bellN").textContent = sinLeer;
+  document.getElementById("bellN").style.display = sinLeer ? "grid" : "none";
+  document.title = (sinLeer ? `(${sinLeer}) ` : "") + "Amigó 360 · Centro de Control Financiero";
+  document.getElementById("kNuevas").textContent = S.filter(s => s.estado === "radicada").length;
+  document.getElementById("kInfo").textContent = S.filter(s => s.estado === "info").length;
+  document.getElementById("kProc").textContent = S.filter(s => ["revision","cotizacion"].includes(s.estado)).length;
+  document.getElementById("kOrden").textContent = S.filter(s => s.estado === "orden").length;
+  document.getElementById("kMonto").textContent = fmt(S.filter(s => !["orden","rechazada"].includes(s.estado)).reduce((t,s) => t + s.valor, 0));
+}
+
+function renderFiltros(){
+  const S = dbLoad().solicitudes.filter(esFin);
+  document.getElementById("filtros").innerHTML = FILTROS.map(([k, label, fn]) => {
+    const n = S.filter(fn).length;
+    const hot = (k === "nuevas" || k === "radicada") && n > 0;
+    return `<div class="filter ${filtro===k?"active":""}" onclick="setFiltro('${k}')"><span>${label}</span><span class="n ${hot&&filtro!==k?"hot":""}">${n}</span></div>`;
+  }).join("");
+}
+function setFiltro(k){ filtro = k; render(); }
+
+function renderLista(){
+  const q = (document.getElementById("q").value || "").toLowerCase();
+  const fn = FILTROS.find(f => f[0] === filtro)[2];
+  const S = dbLoad().solicitudes.filter(fn)
+    .filter(s => !q || [solId(s.id), s.solicitante.nombre, s.solicitante.sede, s.descripcion, s.cc, s.solicitante.unidad].join(" ").toLowerCase().includes(q))
+    .sort((a,b) => (b.noLeidoFin - a.noLeidoFin) || (b.actualizada - a.actualizada));
+  document.getElementById("listTitle").textContent = FILTROS.find(f => f[0] === filtro)[1];
+  document.getElementById("listCount").textContent = S.length + " solicitud(es)";
+  document.getElementById("lista").innerHTML = S.length ? S.map(s => `
+    <div class="list-item ${s.noLeidoFin?"unread":""} ${selId===s.id?"active":""}" onclick="abrir(${s.id})">
+      <div class="li-top"><span class="li-id">${s.noLeidoFin?'<span class="dot-new"></span> ':""}${solId(s.id)}</span><span class="li-time">${fecha(s.actualizada)}</span></div>
+      <div class="li-desc">${esc(s.descripcion)}</div>
+      <div class="li-sub"><span>${esc(s.solicitante.nombre)} · ${esc(s.solicitante.sede)}</span><b style="color:var(--texto)">${fmt(s.valor)}</b></div>
+      <div class="li-sub"><span class="badge ${ESTADOS[s.estado].cls}">${ESTADOS[s.estado].fin}</span>${s.respuestaNueva?'<span class="tag-resp">↩ Respondió</span>':""}</div>
+    </div>`).join("") : `<div class="det-empty" style="height:auto;padding:40px 10px">No hay solicitudes en esta bandeja.</div>`;
+}
+
+function abrir(id){
+  selId = id; nota = "";
+  const s = dbLoad().solicitudes.find(x => x.id === id);
+  if(s && (s.noLeidoFin)){ dbUpdate(d => { const x = d.solicitudes.find(y => y.id === id); x.noLeidoFin = false; }); }
+  render();
+}
+
+function renderDetalle(){
+  const box = document.getElementById("detalle");
+  const d = dbLoad();
+  const s = d.solicitudes.find(x => x.id === selId);
+  if(!s){
+    box.innerHTML = `<div class="det-empty"><div><div style="font-size:46px">📂</div><h3 style="color:var(--azul);margin:8px 0">Selecciona una solicitud</h3>
+      Las nuevas solicitudes aparecen aquí al instante, sin correos.<br>Las marcadas con <span class="dot-new"></span> están sin leer.</div></div>`;
+    return;
+  }
+  const notaPrev = document.getElementById("aNota")?.value ?? nota;
+  const e = ESTADOS[s.estado];
+  const p = infoPresupuesto(d, s);
+  const c = p.centro;
+  const pctEj = c.presupuesto ? c.ejecutado / c.presupuesto * 100 : 0;
+  const pctRes = c.presupuesto ? p.reservadoOtras / c.presupuesto * 100 : 0;
+  const pctEsta = c.presupuesto ? Math.min(s.valor, Math.max(p.saldo,0)) / c.presupuesto * 100 : 0;
+  const yaReservado = ["revision","cotizacion","orden"].includes(s.estado);
+
+  box.innerHTML = `
+    <div class="det-head">
+      <div>
+        <h2>${solId(s.id)} · ${esc(s.descripcion)}</h2>
+        <div class="muted">Radicada el ${fecha(s.creada)} · ${esc(s.tipo)}</div>
+      </div>
+      <span class="badge ${e.cls}" style="font-size:13px;padding:6px 12px">${e.fin}</span>
+    </div>
+
+    <div class="grid2">
+      <div class="card">
+        <h3>👤 Solicitante</h3>
+        <dl class="kv">
+          <dt>Nombre</dt><dd>${esc(s.solicitante.nombre)}</dd>
+          <dt>Rol · Código</dt><dd>${esc(s.solicitante.rol)} · ${esc(s.solicitante.codigo)}</dd>
+          <dt>Sede</dt><dd>${esc(s.solicitante.sede)}</dd>
+          <dt>Unidad</dt><dd>${esc(s.solicitante.unidad)}</dd>
+        </dl>
+        <h3 style="margin-top:16px">📋 Lo que solicita</h3>
+        <dl class="kv">
+          <dt>Cantidad</dt><dd>${esc(s.cantidad)}</dd>
+          <dt>Valor estimado</dt><dd style="color:var(--naranja);font-size:15px">${fmt(s.valor)}</dd>
+          <dt>Justificación</dt><dd style="font-weight:400">${esc(s.justificacion)}</dd>
+          ${s.proveedorSugerido ? `<dt>Proveedor sugerido</dt><dd>${esc(s.proveedorSugerido)}</dd>` : ""}
+          <dt>Adjuntos</dt><dd>${s.adjuntos.length ? `<div class="chips">${s.adjuntos.map(a => `<span class="chip">📎 ${esc(a.nombre)} <span class="muted">${esc(a.tam||"")}</span></span>`).join("")}</div>` : '<span class="muted" style="font-weight:400">Ninguno</span>'}</dd>
+        </dl>
+      </div>
+
+      <div class="card">
+        <h3>💰 Validación presupuestal automática</h3>
+        <div class="muted" style="font-size:12px;margin-bottom:8px">Centro de costo <b>${esc(s.cc)}</b> · ${esc(c.nombre)} (${esc(c.sede)})</div>
+        <div class="bud">
+          <div class="r"><span>Presupuesto anual</span><b>${fmt(c.presupuesto)}</b></div>
+          <div class="r"><span>Ejecutado a la fecha</span><b>− ${fmt(c.ejecutado)}</b></div>
+          <div class="r"><span>Reservado por otras solicitudes</span><b>− ${fmt(p.reservadoOtras)}</b></div>
+          <div class="r tot"><span>Saldo disponible</span><span>${fmt(p.saldo)}</span></div>
+          <div class="r"><span>Esta solicitud</span><b style="color:var(--naranja)">− ${fmt(s.valor)}</b></div>
+          <div class="r tot"><span>Saldo después</span><span style="color:${p.alcanza?"var(--verde)":"var(--rojo)"}">${fmt(p.saldoDespues)}</span></div>
+        </div>
+        <div class="barra">
+          <i style="width:${pctEj}%;background:#94A3B8"></i>
+          <i style="width:${pctRes}%;background:#A78BFA"></i>
+          <i style="width:${pctEsta}%;background:var(--naranja)"></i>
+        </div>
+        <div class="muted" style="font-size:11px">▪ Ejecutado ▪ <span style="color:#7C3AED">Reservado</span> ▪ <span style="color:var(--naranja)">Esta solicitud</span></div>
+        <div class="alert ${p.alcanza?"ok":"bad"}" style="margin-top:10px;padding:10px 12px">
+          ${yaReservado ? "✓ El presupuesto de esta solicitud ya está reservado." : p.alcanza ? "✓ Hay saldo suficiente. Puede aprobarse." : "✕ Saldo insuficiente en este centro de costo."}
+        </div>
+      </div>
+    </div>
+
+    <!-- TARJETA COPILOTO FINANCIERO GEMINI -->
+    <div class="card" style="margin-top:14px;background:#FAF8FE;border:1.5px solid #D8B4FE">
+      <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px">
+        <h3 style="color:var(--morado);margin:0">✨ Dictamen Financiero con Gemini Copilot</h3>
+        <button class="btn sm purple" onclick="analizarConGemini(${s.id})" id="btnGeminiAnalisis">
+          ✨ Analizar con Gemini IA
+        </button>
+      </div>
+      <div id="boxGeminiAnalisis" style="margin-top:10px;font-size:13px;line-height:1.6;color:#374151">
+        Haz clic en <b>"Analizar con Gemini IA"</b> para obtener una evaluación experta del impacto presupuestal, pertinencia para la sede y recomendación ejecutiva para Luz Marly.
+      </div>
+    </div>
+
+    ${renderAcciones(s, p)}
+
+    <div class="card" style="margin-top:14px">
+      <h3>🕑 Historial del trámite <span class="muted" style="font-weight:400;font-size:12px">(lo mismo que ve el solicitante)</span></h3>
+      <div class="timeline">${s.historial.map(h => `
+        <div class="ev ${h.autor} ${h.auto?"auto":""}">
+          <small>${h.autor==="financiera" ? (h.auto ? "Mensaje automático · Dirección Financiera" : "Luz Marly Alzate") : h.autor==="solicitante" ? esc(s.solicitante.nombre) : "Sistema"} · ${fecha(h.ts)}</small>${esc(h.texto)}
+          ${(h.adjuntos||[]).map(a => `<div class="adj">📎 ${esc(a.nombre)}</div>`).join("")}
+        </div>`).join("")}
+      </div>
+    </div>`;
+
+  const ta = document.getElementById("aNota");
+  if(ta){ ta.value = notaPrev; ta.addEventListener("input", ev => nota = ev.target.value); }
+}
+
+function renderAcciones(s, p){
+  if(s.estado === "orden") return `
+    <div class="actions"><h3>✅ Trámite finalizado</h3>
+      <div class="sub">Orden ${esc(s.oc.numero)} emitida a ${esc(s.oc.proveedor)} por ${fmt(s.oc.valor)}. El solicitante ya fue notificado.</div>
+      <button class="btn primary" onclick="verOC(${s.id})">📄 Ver / imprimir orden de compra</button></div>`;
+  if(s.estado === "rechazada") return `<div class="actions"><h3>Solicitud rechazada</h3><div class="sub" style="margin:0">El solicitante fue notificado con el motivo.</div></div>`;
+
+  const optsInfo = Object.entries(PLANTILLAS_INFO).map(([k,v]) => `<option value="${k}">${esc(v)}</option>`).join("");
+  const optsRech = Object.entries(MOTIVOS_RECHAZO).map(([k,v]) => `<option value="${k}">${esc(v)}</option>`).join("");
+  const optsProv = PROVEEDORES.map(v => `<option ${s.proveedorSugerido && v.toLowerCase().includes(s.proveedorSugerido.toLowerCase().split(" ")[0]) ? "selected":""}>${esc(v)}</option>`).join("");
+
+  let principal = "";
+  if(s.estado === "radicada" || (s.estado === "info" && (s.estadoPrevio||"radicada") === "radicada"))
+    principal = `<button class="btn green" onclick="act(${s.id},'aprobar')" ${p.alcanza?"":"disabled title='Saldo insuficiente'"}>✓ Aprobar y reservar presupuesto</button>`;
+  else if(s.estado === "revision" || (s.estado === "info" && s.estadoPrevio === "revision"))
+    principal = `<button class="btn purple" onclick="act(${s.id},'cotizar')">📑 Enviar a cotización</button>`;
+  else if(s.estado === "cotizacion" || (s.estado === "info" && s.estadoPrevio === "cotizacion"))
+    principal = `
+      <div class="act-label">Adjudicar y emitir orden de compra</div>
+      <div class="act-row">
+        <select id="aProv">${optsProv}</select>
+        <input id="aValor" type="number" value="${s.valor}" style="width:140px" title="Valor final adjudicado">
+        <button class="btn primary" onclick="act(${s.id},'orden')">🏛️ Emitir orden de compra</button>
+      </div>`;
+
+  return `
+    <div class="actions">
+      <h3>⚡ Acciones rápidas</h3>
+      <div class="sub">Cada acción le notifica automáticamente al solicitante con un mensaje redactado por el sistema. No necesitas escribir ni enviar correos.</div>
+      ${s.estado === "info" ? `<div class="alert warn" style="margin-bottom:12px;padding:10px 12px">⏳ Esperando respuesta de ${esc(s.solicitante.nombre)}. Puedes seguir gestionando si lo consideras.</div>` : ""}
+      ${s.respuestaNueva ? `<div class="alert info" style="margin-bottom:12px;padding:10px 12px">↩ <b>${esc(s.solicitante.nombre)}</b> respondió a tu petición. Revisa el historial abajo.</div>` : ""}
+      <div class="act-row">${principal.startsWith("<button") ? principal : ""}</div>
+      ${principal.startsWith("<button") ? "" : principal}
+
+      <div class="act-label">Pedir un dato o documento (plantilla)</div>
+      <div class="act-row"><select id="aInfo">${optsInfo}</select><button class="btn amber" onclick="act(${s.id},'info')">📨 Solicitar</button></div>
+
+      <div class="act-label">Rechazar (motivo predefinido)</div>
+      <div class="act-row"><select id="aRech">${optsRech}</select><button class="btn red" onclick="act(${s.id},'rechazar')">✕ Rechazar</button></div>
+
+      <div style="display:flex;justify-content:space-between;align-items:center;margin:12px 0 6px">
+        <div class="act-label" style="margin:0">Mensaje adicional (opcional · se adjunta a la acción)</div>
+        <button type="button" class="btn sm purple" onclick="redactarNotaConGemini(${s.id})" style="padding:2px 8px;font-size:11px">✨ Redactar con Gemini</button>
+      </div>
+      <div class="nota"><textarea id="aNota" placeholder="Solo si hace falta algo personalizado. Ej: 'Profe, priorizamos esta compra para la semana de prácticas.'"></textarea></div>
+      <div style="text-align:right;margin-top:8px"><button class="btn ghost sm" onclick="act(${s.id},'nota')">Enviar solo el mensaje</button></div>
+    </div>`;
+}
+
+async function analizarConGemini(id){
+  const d = dbLoad();
+  const s = d.solicitudes.find(x => x.id === id);
+  if(!s) return;
+  const p = infoPresupuesto(d, s);
+  const btn = document.getElementById("btnGeminiAnalisis");
+  const box = document.getElementById("boxGeminiAnalisis");
+
+  btn.disabled = true;
+  btn.innerHTML = "⏳ Analizando con Gemini...";
+  toast("✨ Gemini IA está evaluando el impacto financiero...", "green");
+
+  try {
+    const dictamen = await geminiDictamenFinanciero(s, p.centro, p.saldo);
+    box.innerHTML = `<div style="background:#fff;border-left:3px solid var(--morado);padding:10px 14px;border-radius:8px;font-size:13px;line-height:1.6;white-space:pre-line"><b>Dictamen Ejecutivo:</b>\n${esc(dictamen)}</div>`;
+    toast("✓ Dictamen financiero generado.");
+  } catch(e) {
+    toast("No se pudo conectar con Gemini, se mostró análisis asistido.");
+  } finally {
+    btn.disabled = false;
+    btn.innerHTML = "✨ Re-analizar con Gemini IA";
+  }
+}
+
+async function redactarNotaConGemini(id){
+  const s = dbLoad().solicitudes.find(x => x.id === id);
+  if(!s) return;
+  const motivo = prompt("¿Qué deseas comunicarle al solicitante? (Ej: 'Falta cotización del Urabá' o 'Aprobado prioritario para el laboratorio')", "Aprobado prioritario para las prácticas de laboratorio");
+  if(!motivo) return;
+
+  toast("✨ Gemini está redactando la observación formal...", "green");
+  try {
+    const texto = await geminiRedactarNota(s, motivo);
+    document.getElementById("aNota").value = texto;
+    nota = texto;
+    toast("✓ Mensaje formal redactado.");
+  } catch(e) {
+    toast("Error al redactar.");
+  }
+}
+
+function act(id, accion){
+  const opts = { nota: document.getElementById("aNota")?.value || "" };
+  if(accion === "info") opts.plantilla = document.getElementById("aInfo").value;
+  if(accion === "rechazar"){ opts.motivo = document.getElementById("aRech").value; if(!confirm("¿Confirmas el rechazo de " + solId(id) + "?")) return; }
+  if(accion === "orden"){ opts.proveedor = document.getElementById("aProv").value; opts.valor = document.getElementById("aValor").value; }
+  if(accion === "nota" && !opts.nota.trim()){ toast("Escribe el mensaje primero.", "orange"); return; }
+  accionFinanciera(id, accion, opts);
+  const s = dbLoad().solicitudes.find(x => x.id === id);
+  conocidos[id] = s.historial.length;
+  nota = ""; const ta = document.getElementById("aNota"); if(ta) ta.value = "";
+  const msgs = { aprobar:"✓ Presupuesto reservado.", info:"📨 Petición enviada.", cotizar:"📑 Enviada a cotización.", orden:"🏛️ Orden de compra emitida.", rechazar:"Solicitud rechazada.", nota:"Mensaje enviado." };
+  toast(`${msgs[accion]} <b>${esc(s.solicitante.nombre)}</b> fue notificado automáticamente.`, accion==="orden"?"green":"");
+  render();
+  if(accion === "orden") verOC(id);
+}
+
+function verOC(id){ abrirOC(dbLoad().solicitudes.find(x => x.id === id)); }
+
+function reiniciar(){
+  if(!confirm("¿Reiniciar todos los datos de la demostración? Se borran las solicitudes creadas.")) return;
+  dbReset(); selId = null; conocidos = {};
+  dbLoad().solicitudes.forEach(s => conocidos[s.id] = s.historial.length);
+  render(); toast("Datos de la demo reiniciados.");
+}
+
+/* ======================= TIEMPO REAL ======================= */
+onDbChange(() => {
+  if(!sessionStorage.getItem("amigo360_fin")) return;
+  dbLoad().solicitudes.forEach(s => {
+    const antes = conocidos[s.id];
+    if(antes === undefined){
+      toast(`🔔 <b>Nueva solicitud ${solId(s.id)}</b><br>${esc(s.solicitante.nombre)} (${esc(s.solicitante.sede)}) · ${esc(s.descripcion.slice(0,60))} · ${fmt(s.valor)}`, "orange");
+      beep();
+    } else if(s.historial.length > antes && s.historial[s.historial.length-1].autor === "solicitante"){
+      toast(`↩ <b>${esc(s.solicitante.nombre)}</b> respondió en ${solId(s.id)}`, "orange");
+      beep();
+      if(selId === s.id) dbUpdate(d => { d.solicitudes.find(x => x.id === s.id).noLeidoFin = false; });
+    }
+    conocidos[s.id] = s.historial.length;
+  });
+  render();
+});
+
+/* ======================= INICIO ======================= */
+if(sessionStorage.getItem("amigo360_fin")){
+  iniciar();
+} else {
+  window.location.href = "index.html";
+}
+</script>
+</body>
+</html>
+
+
+
