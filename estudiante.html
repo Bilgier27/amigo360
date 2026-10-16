@@ -327,12 +327,23 @@ function verNueva(){
         </select>
         <div class="hint" id="fCcHint" style="font-size:12px;color:var(--gris);margin-top:5px"></div>
       </div>
+
+      <div class="field">
+        <label><b>Nombre de quien radica (puedes personalizarlo con tu nombre si eres directivo o docente):</b></label>
+        <input id="fNombreSol" value="${esc(user.nombre)}" placeholder="Ej: Padre Mauricio, Luz Marly, Santiago Hernández, etc.">
+      </div>
       <div id="fErr" class="err hidden"></div>
 
       <div class="field"><label id="lblTipo">¿Qué tipo de necesidad deseas solicitar?</label>
-        <select id="fTipo"></select></div>
+        <select id="fTipo" onchange="verificarTipoPersonalizado()"></select>
+      </div>
 
-      <div class="field"><label id="lblDesc">Título o descripción</label>
+      <div class="field hidden" id="fieldTipoOtro" style="background:#F0FDF4;padding:12px;border:1.5px solid #86EFAC;border-radius:10px;margin-bottom:12px">
+        <label style="color:#166534;font-weight:700">✍️ Escribe el tipo de requerimiento que deseas solicitar:</label>
+        <input id="fTipoOtro" placeholder="Ej: Adquisición de licencias, Capacitación técnica, Dotación especial..." style="background:#fff;border-color:#86EFAC">
+      </div>
+
+      <div class="field"><label id="lblDesc">Título o descripción detallada</label>
         <input id="fDesc" placeholder="Describe brevemente lo que solicitas..."></div>
 
       <div class="row2" id="rowMonto">
@@ -387,6 +398,19 @@ function actualizarInfoPrograma(){
   }
 }
 
+function verificarTipoPersonalizado(){
+  const sel = document.getElementById("fTipo");
+  const fieldOtro = document.getElementById("fieldTipoOtro");
+  if(!sel || !fieldOtro) return;
+  if(sel.value === "otro" || sel.value.startsWith("✍️")){
+    fieldOtro.classList.remove("hidden");
+    const inp = document.getElementById("fTipoOtro");
+    if(inp) inp.focus();
+  } else {
+    fieldOtro.classList.add("hidden");
+  }
+}
+
 function cambiarCategoriaForm(){
   const cat = document.getElementById("fCat").value;
   const selTipo = document.getElementById("fTipo");
@@ -399,7 +423,8 @@ function cambiarCategoriaForm(){
     selTipo.innerHTML = `
       <option>Compra de bien (equipos, software, insumos)</option>
       <option>Contratación de servicio (asesoría, capacitador)</option>
-      <option>Apoyo para evento o salida académica</option>`;
+      <option>Apoyo para evento o salida académica</option>
+      <option value="otro">✍️ Otro requerimiento financiero o compra especial...</option>`;
     lblDesc.textContent = "Descripción del bien o servicio solicitado";
     document.getElementById("fDesc").placeholder = "Ej: 3 licencias de software MATLAB para ingeniería";
     document.getElementById("lblProv").textContent = "Proveedor sugerido (opcional)";
@@ -410,7 +435,8 @@ function cambiarCategoriaForm(){
     selTipo.innerHTML = `
       <option>Postulación a Movilidad / Intercambio Académico</option>
       <option>Solicitud de Acompañamiento Psicoemocional (Choque cultural)</option>
-      <option>Inscripción a Taller de Inglés / Bilingüismo Docente</option>`;
+      <option>Inscripción a Taller de Inglés / Bilingüismo Docente</option>
+      <option value="otro">✍️ Otro requerimiento de internacionalización...</option>`;
     lblDesc.textContent = "Universidad de destino o motivo de acompañamiento";
     document.getElementById("fDesc").placeholder = "Ej: Postulación a intercambio en Univ. de Salamanca (España)";
     document.getElementById("fValor").value = "0";
@@ -422,7 +448,8 @@ function cambiarCategoriaForm(){
     selTipo.innerHTML = `
       <option>Propuesta de Proyecto de Impacto Social en Urabá</option>
       <option>Propuesta de Consultoría Técnica Empresarial</option>
-      <option>Propuesta de Curso / Diplomado de Extensión</option>`;
+      <option>Propuesta de Curso / Diplomado de Extensión</option>
+      <option value="otro">✍️ Otra iniciativa o proyecto de extensión...</option>`;
     lblDesc.textContent = "Nombre de la iniciativa comunitaria o consultoría";
     document.getElementById("fDesc").placeholder = "Ej: Taller de capacitación en innovación para emprendedoras de Carepa";
     document.getElementById("lblProv").textContent = "Comunidad, alcaldía o empresa aliada";
@@ -433,7 +460,8 @@ function cambiarCategoriaForm(){
     selTipo.innerHTML = `
       <option>Inscripción a Semillero de Investigación</option>
       <option>Postulación de Proyecto a Convocatoria MinCiencias</option>
-      <option>Solicitud de Publicación en Micrositio Científico</option>`;
+      <option>Solicitud de Publicación en Micrositio Científico</option>
+      <option value="otro">✍️ Otra propuesta o solicitud de investigación...</option>`;
     lblDesc.textContent = "Semillero o línea de investigación de interés";
     document.getElementById("fDesc").placeholder = "Ej: Semillero SIDET - Desarrollo de Software e IoT en Urabá";
     document.getElementById("fValor").value = "0";
@@ -441,11 +469,15 @@ function cambiarCategoriaForm(){
     fieldProv.style.display = "none";
     btnSubmit.textContent = "Enviar a Investigaciones (Nataly Restrepo) ➤";
   }
+  verificarTipoPersonalizado();
 }
 
 async function mejorarConGemini(){
   const desc = document.getElementById("fDesc").value.trim();
-  const tipo = document.getElementById("fTipo").value;
+  let tipo = document.getElementById("fTipo").value;
+  if(tipo === "otro" || tipo.startsWith("✍️")){
+    tipo = document.getElementById("fTipoOtro")?.value.trim() || desc;
+  }
   const borrador = document.getElementById("fJust").value.trim();
   const btn = document.getElementById("btnGeminiJust");
 
@@ -502,10 +534,17 @@ function enviarSolicitud(){
   const catObj = CATEGORIAS[cat] || CATEGORIAS.financiera;
   const ccSel = document.getElementById("fPrograma") ? document.getElementById("fPrograma").value : user.cc;
   const cObj = CENTROS[ccSel] || CENTROS[user.cc] || { nombre: user.unidad, sede: user.sede };
+  const nombreSol = document.getElementById("fNombreSol") ? document.getElementById("fNombreSol").value.trim() : user.nombre;
+
+  let tipoFinal = document.getElementById("fTipo").value;
+  if(tipoFinal === "otro" || tipoFinal.startsWith("✍️")){
+    const custom = document.getElementById("fTipoOtro")?.value.trim();
+    tipoFinal = custom || "Requerimiento especial";
+  }
 
   const id = crearSolicitud({
     solicitante: {
-      nombre: user.nombre,
+      nombre: nombreSol || user.nombre,
       codigo: user.codigo,
       rol: user.rol,
       sede: cObj.sede,
@@ -513,7 +552,7 @@ function enviarSolicitud(){
     },
     cc: ccSel,
     categoria: cat,
-    tipo: document.getElementById("fTipo").value,
+    tipo: tipoFinal,
     descripcion: desc,
     cantidad: Number(document.getElementById("fCant")?.value) || 1,
     valor,
