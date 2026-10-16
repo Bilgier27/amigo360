@@ -1,11 +1,11 @@
 {
-  "version": 1792133999999.0,
+  "version": 1792167000000.0,
   "nextId": 106,
   "solicitudes": [
     {
-      "id": 101,
-      "creada": 1792125264944,
-      "actualizada": 1792128864944,
+      "id": 100,
+      "creada": 1790900000000,
+      "actualizada": 1791500000000,
       "categoria": "financiera",
       "solicitante": {
         "nombre": "Jorge Cuesta",
@@ -16,20 +16,40 @@
       },
       "cc": "APT-BIE",
       "tipo": "Compra de bien",
-      "descripcion": "Kits deportivos para torneo interno de integración",
-      "cantidad": 20,
-      "valor": 1450000,
-      "justificacion": "Torneo de integración de la sede Apartadó, 160 estudiantes participantes.",
-      "proveedorSugerido": "",
+      "descripcion": "Dotación de implementos deportivos y juegos de mesa (Bienestar)",
+      "cantidad": 1,
+      "valor": 15600000,
+      "justificacion": "Dotación semestral de implementos deportivos y mesas de tenis para la sede Apartadó.",
+      "proveedorSugerido": "Deportes y Dotaciones de Urabá S.A.S.",
       "adjuntos": [],
-      "estado": "radicada",
+      "estado": "orden",
       "estadoPrevio": null,
-      "oc": null,
+      "oc": {
+        "numero": "OC-2026-0042",
+        "proveedor": "Deportes y Dotaciones de Urabá S.A.S.",
+        "valor": 15600000,
+        "fecha": 1791500000000
+      },
       "historial": [
         {
-          "ts": 1792125264944,
+          "ts": 1790900000000,
           "autor": "sistema",
-          "texto": "Solicitud radicada desde el portal."
+          "texto": "Solicitud radicada desde el portal institucional por Jorge Cuesta."
+        },
+        {
+          "ts": 1791100000000,
+          "autor": "financiera",
+          "texto": "Tu solicitud fue revisada. La Dirección Financiera validó y reservó el presupuesto en el centro de costo APT-BIE (Bienestar Universitario)."
+        },
+        {
+          "ts": 1791300000000,
+          "autor": "financiera",
+          "texto": "Tu solicitud está en cotización con proveedores autorizados de la región de Urabá."
+        },
+        {
+          "ts": 1791500000000,
+          "autor": "financiera",
+          "texto": "Se emitió la Orden de Compra OC-2026-0042 firmada digitalmente por la Dirección Financiera (Luz Marly Alzate). Proveedor: Deportes y Dotaciones de Urabá S.A.S. Valor: $15.600.000 COP. Bienes recibidos a satisfacción."
         }
       ],
       "noLeidoFin": false,

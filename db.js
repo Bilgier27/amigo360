@@ -7,18 +7,18 @@
    En producción esto se reemplaza por una base de datos + API (servidor).
    ===================================================================== */
 
-const DB_KEY = "amigo360_db_v2";
+const DB_KEY = "amigo360_db_v3";
 
 /* ---------- Centros de costo con presupuesto anual (datos de ejemplo) ---------- */
 const CENTROS = {
-  "APT-ING": { nombre: "Ingeniería de Sistemas",                    sede: "Apartadó", presupuesto: 45000000,  ejecutado: 12800000 },
-  "APT-PSI": { nombre: "Psicología",                                sede: "Apartadó", presupuesto: 32000000,  ejecutado: 9100000 },
-  "APT-ADM": { nombre: "Administración de Empresas",                sede: "Apartadó", presupuesto: 38000000,  ejecutado: 14200000 },
-  "APT-LLE": { nombre: "Licenciatura en Lenguas Extranjeras",       sede: "Apartadó", presupuesto: 28000000,  ejecutado: 8500000 },
-  "APT-BIE": { nombre: "Bienestar Universitario",                  sede: "Apartadó", presupuesto: 22000000,  ejecutado: 15600000 },
-  "MED-INV": { nombre: "Dirección de Investigaciones",             sede: "Medellín", presupuesto: 120000000, ejecutado: 54000000 },
-  "MED-EXT": { nombre: "Dirección de Extensión",                   sede: "Medellín", presupuesto: 80000000,  ejecutado: 47000000 },
-  "MED-INT": { nombre: "Dirección de Internacionalización",        sede: "Medellín", presupuesto: 50000000,  ejecutado: 21000000 },
+  "APT-ING": { nombre: "Ingeniería de Sistemas",                    sede: "Apartadó", presupuesto: 45000000,  ejecutado: 0 },
+  "APT-PSI": { nombre: "Psicología",                                sede: "Apartadó", presupuesto: 32000000,  ejecutado: 0 },
+  "APT-ADM": { nombre: "Administración de Empresas",                sede: "Apartadó", presupuesto: 38000000,  ejecutado: 0 },
+  "APT-LLE": { nombre: "Licenciatura en Lenguas Extranjeras",       sede: "Apartadó", presupuesto: 28000000,  ejecutado: 0 },
+  "APT-BIE": { nombre: "Bienestar Universitario",                  sede: "Apartadó", presupuesto: 22000000,  ejecutado: 0 },
+  "MED-INV": { nombre: "Dirección de Investigaciones",             sede: "Medellín", presupuesto: 120000000, ejecutado: 0 },
+  "MED-EXT": { nombre: "Dirección de Extensión",                   sede: "Medellín", presupuesto: 80000000,  ejecutado: 0 },
+  "MED-INT": { nombre: "Dirección de Internacionalización",        sede: "Medellín", presupuesto: 50000000,  ejecutado: 0 },
 };
 
 /* ---------- Estados del trámite ---------- */
@@ -89,12 +89,16 @@ function seed() {
 
   return {
     version: now,
-    nextId: 105,
+    nextId: 106,
     solicitudes: [
-      S(101, 2, "financiera", { nombre: "Jorge Cuesta", codigo: "E-2023118", rol: "Estudiante", sede: "Apartadó", unidad: "Bienestar Universitario" },
-        "APT-BIE", "Compra de bien", "Kits deportivos para torneo interno de integración", 20, 1450000,
-        "Torneo de integración de la sede Apartadó, 160 estudiantes participantes.", "radicada",
-        [sis(now - 2 * h, "Solicitud radicada desde el portal.")], { noLeidoFin: true }),
+      S(100, 360, "financiera", { nombre: "Jorge Cuesta", codigo: "E-2023118", rol: "Estudiante", sede: "Apartadó", unidad: "Bienestar Universitario" },
+        "APT-BIE", "Compra de bien", "Dotación de implementos deportivos y juegos de mesa (Bienestar)", 1, 15600000,
+        "Dotación semestral de implementos deportivos y mesas de tenis para la sede Apartadó.", "orden",
+        [sis(now - 360 * h, "Solicitud radicada desde el portal institucional por Jorge Cuesta."),
+         fin(now - 300 * h, "Tu solicitud fue revisada. La Dirección Financiera validó y reservó el presupuesto en el centro de costo APT-BIE (Bienestar Universitario)."),
+         fin(now - 200 * h, "Tu solicitud está en cotización con proveedores autorizados de la región de Urabá."),
+         fin(now - 100 * h, "Se emitió la Orden de Compra OC-2026-0042 firmada digitalmente por la Dirección Financiera (Luz Marly Alzate). Proveedor: Deportes y Dotaciones de Urabá S.A.S. Valor: $15.600.000 COP. Bienes recibidos a satisfacción.")],
+        { oc: { numero: "OC-2026-0042", proveedor: "Deportes y Dotaciones de Urabá S.A.S.", valor: 15600000, fecha: now - 100 * h } }),
       S(102, 26, "extension", { nombre: "Carlos Mejía", codigo: "A-10422", rol: "Administrativo", sede: "Apartadó", unidad: "Dirección de Extensión" },
         "MED-EXT", "Iniciativa de Extensión", "Diplomado en Gerencia Logística y Portuaria para Urabá", 1, 6500000,
         "Diplomado ofertado en alianza con empresas del sector portuario de Urabá.", "revision",
@@ -195,16 +199,23 @@ function onDbChange(cb) {
 }
 
 /* ---------- Presupuesto ---------- */
+function ejecutado(d, cc, excluirId) {
+  return d.solicitudes
+    .filter(s => s.cc === cc && s.id !== excluirId && s.estado === "orden")
+    .reduce((t, s) => t + (s.oc ? s.oc.valor : s.valor), 0);
+}
 function reservado(d, cc, excluirId) {
   return d.solicitudes
-    .filter(s => s.cc === cc && s.id !== excluirId && ["revision", "cotizacion", "orden"].includes(s.estado))
+    .filter(s => s.cc === cc && s.id !== excluirId && ["revision", "cotizacion"].includes(s.estado))
     .reduce((t, s) => t + (s.oc ? s.oc.valor : s.valor), 0);
 }
 function infoPresupuesto(d, s) {
-  const c = CENTROS[s.cc] || { nombre: s.cc, presupuesto: 0, ejecutado: 0 };
+  const c = { ...(CENTROS[s.cc] || { nombre: s.cc, presupuesto: 0, ejecutado: 0 }) };
+  const ej = ejecutado(d, s.cc, s.id);
   const res = reservado(d, s.cc, s.id);
-  const saldo = c.presupuesto - c.ejecutado - res;
-  return { centro: c, reservadoOtras: res, saldo, saldoDespues: saldo - s.valor, alcanza: saldo >= s.valor };
+  c.ejecutado = ej;
+  const saldo = c.presupuesto - ej - res;
+  return { centro: c, ejecutado: ej, reservadoOtras: res, saldo, saldoDespues: saldo - s.valor, alcanza: saldo >= s.valor };
 }
 
 /* ---------- Operaciones del SOLICITANTE ---------- */

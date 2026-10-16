@@ -179,11 +179,11 @@
   </div>
 </div>
 
-<script src="db.js?v=2"></script>
+<script src="db.js?v=3"></script>
 <script>
 // Limpieza forzada de solicitudes antiguas de caché
 try {
-  ["amigo360_db_v1", "amigo360_db_v2"].forEach(k => {
+  ["amigo360_db_v1", "amigo360_db_v2", "amigo360_db_v3"].forEach(k => {
     let raw = localStorage.getItem(k);
     if(raw && raw.includes("104")){
       let d = JSON.parse(raw);
