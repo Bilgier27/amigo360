@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="es">
 <head>
 <link rel="icon" type="image/png" href="favicon.png">
@@ -179,8 +179,22 @@
   </div>
 </div>
 
-<script src="db.js"></script>
+<script src="db.js?v=2"></script>
 <script>
+// Limpieza forzada de solicitudes antiguas de caché
+try {
+  ["amigo360_db_v1", "amigo360_db_v2"].forEach(k => {
+    let raw = localStorage.getItem(k);
+    if(raw && raw.includes("104")){
+      let d = JSON.parse(raw);
+      if(d && Array.isArray(d.solicitudes)){
+        d.solicitudes = d.solicitudes.filter(s => s.id !== 104);
+        localStorage.setItem(k, JSON.stringify(d));
+      }
+    }
+  });
+} catch(e){}
+
 /* ======================= SESIÓN ======================= */
 let user = JSON.parse(sessionStorage.getItem("amigo360_user") || "null");
 let vista = { tipo: "inicio", id: null };
@@ -234,7 +248,7 @@ function render(){
   renderLista();
   if(vista.tipo === "nueva") return;           // no borrar el formulario mientras se escribe
   if(vista.tipo === "detalle") renderDetalle(vista.id);
-  else renderInicio();
+  else verNueva();
 }
 
 /* ======================= NAVEGACIÓN MÓVIL ======================= */
@@ -530,7 +544,7 @@ function verDetalle(id){
 
 function renderDetalle(id){
   const s = dbLoad().solicitudes.find(x => x.id === id);
-  if(!s){ vista = { tipo: "inicio" }; return renderInicio(); }
+  if(!s){ vista = { tipo: "nueva" }; return verNueva(); }
   const e = ESTADOS[s.estado];
   const catObj = CATEGORIAS[s.categoria || "financiera"] || CATEGORIAS.financiera;
   const borrador = document.getElementById("rTexto")?.value || "";

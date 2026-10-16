@@ -40,6 +40,13 @@ class AmigoHandler(SimpleHTTPRequestHandler):
         directory = os.path.dirname(os.path.abspath(__file__))
         super().__init__(*args, directory=directory, **kwargs)
 
+    def end_headers(self):
+        if not self.path.startswith("/favicon.ico"):
+            self.send_header("Cache-Control", "no-cache, no-store, must-revalidate")
+            self.send_header("Pragma", "no-cache")
+            self.send_header("Expires", "0")
+        super().end_headers()
+
     def do_GET(self):
         if self.path == "/api/db":
             self.send_response(200)
@@ -47,7 +54,7 @@ class AmigoHandler(SimpleHTTPRequestHandler):
             self.send_header("Access-Control-Allow-Origin", "*")
             self.send_header("Cache-Control", "no-cache, no-store, must-revalidate")
             self.end_headers()
-            data = CURRENT_DATA or load_data() or {}
+            data = load_data() or CURRENT_DATA or {}
             self.wfile.write(json.dumps(data, ensure_ascii=False).encode("utf-8"))
             return
 

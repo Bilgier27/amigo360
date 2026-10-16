@@ -1,5 +1,5 @@
 {
-  "version": 1792133008614.6633,
+  "version": 1792133999999.0,
   "nextId": 106,
   "solicitudes": [
     {
@@ -111,49 +111,6 @@
           "ts": 1792133008614,
           "autor": "financiera",
           "texto": "Estimado(a) Sophie Miller: Recibe un cordial saludo de la Dirección de Internacionalización. Hemos recibido tu postulación \"Acompañamiento por adaptación cultural en Apartadó\" con gran agrado. Nuestro equipo ya inició el enlace con la coordinación académica para garantizar tu homologación sin contratiempos. Te estaremos contactando para la sesión de inducción intercultural. ¡Éxitos en tu experiencia formativa!"
-        }
-      ],
-      "noLeidoFin": true,
-      "noLeidoEst": true
-    },
-    {
-      "id": 104,
-      "creada": 1792114464944,
-      "actualizada": 1792132494247,
-      "categoria": "investigacion",
-      "solicitante": {
-        "nombre": "Valentina Mosquera",
-        "codigo": "E-2024051",
-        "rol": "Estudiante",
-        "sede": "Apartadó",
-        "unidad": "Facultad de Ingenierías"
-      },
-      "cc": "APT-ING",
-      "tipo": "Inscripción a Semillero",
-      "descripcion": "Inscripción al Semillero SIDET (Desarrollo y Software Urabá)",
-      "cantidad": 1,
-      "valor": 0,
-      "justificacion": "Estudiante de Ingeniería de Sistemas interesada en la línea de automatización e IoT.",
-      "proveedorSugerido": "",
-      "adjuntos": [],
-      "estado": "orden",
-      "estadoPrevio": null,
-      "oc": null,
-      "historial": [
-        {
-          "ts": 1792114464944,
-          "autor": "sistema",
-          "texto": "Postulación a semillero radicada."
-        },
-        {
-          "ts": 1792121664944,
-          "autor": "financiera",
-          "texto": "Dirección de Investigaciones validando hoja de vida académica."
-        },
-        {
-          "ts": 1792132494247,
-          "autor": "financiera",
-          "texto": "✓ Nataly Restrepo Restrepo (Directora de Investigaciones) aprobó tu postulación. Has sido admitido(a) formalmente en el semillero de investigación."
         }
       ],
       "noLeidoFin": true,

@@ -7,7 +7,7 @@
    En producción esto se reemplaza por una base de datos + API (servidor).
    ===================================================================== */
 
-const DB_KEY = "amigo360_db_v1";
+const DB_KEY = "amigo360_db_v2";
 
 /* ---------- Centros de costo con presupuesto anual (datos de ejemplo) ---------- */
 const CENTROS = {
@@ -104,12 +104,7 @@ function seed() {
         "APT-ING", "Acompañamiento Psicológico (Movilidad)", "Acompañamiento por adaptación cultural en Apartadó", 1, 0,
         "Estudiante foránea de intercambio en Apartadó solicitando apoyo ante choque cultural y clima.", "radicada",
         [sis(now - 12 * h, "Solicitud de apoyo emocional radicada."),
-         fin(now - 8 * h, "Dirección de Internacionalización y Psicología revisando caso.")], { noLeidoFin: true }),
-      S(104, 5, "investigacion", { nombre: "Valentina Mosquera", codigo: "E-2024051", rol: "Estudiante", sede: "Apartadó", unidad: "Facultad de Ingenierías" },
-        "APT-ING", "Inscripción a Semillero", "Inscripción al Semillero SIDET (Desarrollo y Software Urabá)", 1, 0,
-        "Estudiante de Ingeniería de Sistemas interesada en la línea de automatización e IoT.", "radicada",
-        [sis(now - 5 * h, "Postulación a semillero radicada."),
-         fin(now - 3 * h, "Dirección de Investigaciones validando hoja de vida académica.")], { noLeidoFin: true }),
+         fin(now - 8 * h, "Dirección de Internacionalización y Psicología revisando caso.")], { noLeidoFin: true })
     ],
   };
 }
@@ -159,6 +154,10 @@ function dbLoad() {
   let d = null;
   try { d = JSON.parse(localStorage.getItem(DB_KEY)); } catch (e) { }
   if (!d || !Array.isArray(d.solicitudes)) { d = seed(); dbSave(d); }
+  if (d && Array.isArray(d.solicitudes) && d.solicitudes.some(x => x.id === 104)) {
+    d.solicitudes = d.solicitudes.filter(x => x.id !== 104);
+    dbSave(d);
+  }
   return d;
 }
 
