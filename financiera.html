@@ -433,7 +433,7 @@ function reiniciar(){
 /* ======================= TIEMPO REAL ======================= */
 onDbChange(() => {
   if(!sessionStorage.getItem("amigo360_fin")) return;
-  dbLoad().solicitudes.forEach(s => {
+  dbLoad().solicitudes.filter(esFin).forEach(s => {
     const antes = conocidos[s.id];
     if(antes === undefined){
       toast(`🔔 <b>Nueva solicitud ${solId(s.id)}</b><br>${esc(s.solicitante.nombre)} (${esc(s.solicitante.sede)}) · ${esc(s.descripcion.slice(0,60))} · ${fmt(s.valor)}`, "orange");
